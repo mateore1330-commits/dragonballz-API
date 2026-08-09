@@ -1,0 +1,786 @@
+/* ==========================================================================
+   DRAGON BALL Z — THE Z LEGACY
+   Hoja de estilos global · Estilo "poster de periodico japones"
+   --------------------------------------------------------------------------
+   La paleta y las texturas estan sacadas del banner del proyecto:
+   papel envejecido, tinta negra, sellos rojos y tipografia condensada.
+
+   Indice:
+     1. Variables de diseno (colores, fuentes, medidas)
+     2. Base del documento (papel, textura, tipografia)
+     3. Titulares y elementos decorativos (sellos, kanji, reglas)
+     4. Navbar y buscador
+     5. Tarjetas (personajes y planetas)
+     6. Carrusel
+     7. Paginas de detalle
+     8. Botones
+     9. Footer
+    10. Responsive
+   ========================================================================== */
+
+
+/* ==========================================================================
+   1. VARIABLES DE DISENO
+   Centralizadas aqui para poder cambiar toda la piel del sitio desde un
+   unico sitio, en lugar de ir tocando color por color en cada componente.
+   ========================================================================== */
+:root {
+	/* --- Colores --- */
+	--z-paper: #efe6d2;
+	/* Fondo principal: papel de periodico envejecido */
+	--z-paper-light: #f7f1e3;
+	/* Papel mas claro para tarjetas y superficies elevadas */
+	--z-paper-dark: #e2d7bd;
+	/* Papel mas oscuro para zonas hundidas o bordes */
+	--z-ink: #1b1917;
+	/* Tinta negra: texto principal y bordes */
+	--z-ink-soft: #57514a;
+	/* Tinta suavizada: textos secundarios */
+	--z-red: #c1272d;
+	/* Rojo sello: acentos, titulares, estados activos */
+	--z-red-dark: #8e1b20;
+	/* Rojo oscuro: hover de botones rojos */
+	--z-gold: #d99a2b;
+	/* Dorado: detalle del corazon de favoritos */
+
+	/* --- Tipografias --- */
+	--z-font-display: "Anton", "Arial Black", sans-serif;
+	/* Titulares */
+	--z-font-label: "Oswald", "Arial Narrow", sans-serif;
+	/* Etiquetas / botones */
+	--z-font-body: "Noto Serif JP", Georgia, serif;
+	/* Texto corrido */
+
+	/* --- Medidas --- */
+	--z-border: 2px solid var(--z-ink);
+	/* Borde estandar tipo "impreso" */
+	--z-radius: 2px;
+	/* Esquinas casi rectas: el papel no tiene bordes redondeados */
+	--z-shadow: 4px 4px 0 rgba(27, 25, 23, 0.85);
+	/* Sombra dura, sin desenfoque */
+}
+
+
+/* ==========================================================================
+   2. BASE DEL DOCUMENTO
+   ========================================================================== */
+body {
+	background-color: var(--z-paper);
+	color: var(--z-ink);
+	font-family: var(--z-font-body);
+
+	/*
+	  Textura de papel: se superponen tres capas de gradientes muy sutiles
+	  para simular las fibras y las manchas de la impresion antigua.
+	  Al ser CSS puro no añade ni un byte de descarga extra.
+	*/
+	background-image:
+		radial-gradient(circle at 20% 30%, rgba(193, 39, 45, 0.04) 0%, transparent 45%),
+		radial-gradient(circle at 80% 70%, rgba(27, 25, 23, 0.05) 0%, transparent 40%),
+		repeating-linear-gradient(0deg, rgba(27, 25, 23, 0.02) 0px, rgba(27, 25, 23, 0.02) 1px, transparent 1px, transparent 3px);
+	min-height: 100vh;
+}
+
+/* La app ocupa toda la altura para que el footer quede siempre abajo */
+#root {
+	display: flex;
+	flex-direction: column;
+	min-height: 100vh;
+}
+
+a {
+	color: var(--z-red);
+	text-decoration: none;
+	transition: color 0.15s ease;
+}
+
+a:hover {
+	color: var(--z-red-dark);
+}
+
+
+/* ==========================================================================
+   3. TITULARES Y ELEMENTOS DECORATIVOS
+   ========================================================================== */
+
+/* Titular de seccion: "CHARACTERS" / "PLANETS" */
+.z-title {
+	font-family: var(--z-font-display);
+	font-size: clamp(2.5rem, 6vw, 4.5rem);
+	letter-spacing: 0.04em;
+	line-height: 0.95;
+	color: var(--z-red);
+	text-transform: uppercase;
+	margin: 0;
+
+	/* Sombra dura desplazada: efecto de doble impresion desalineada */
+	text-shadow: 3px 3px 0 var(--z-ink);
+}
+
+/* Titular mas pequeno, para las paginas de detalle */
+.z-title--sm {
+	font-size: clamp(2rem, 4vw, 3rem);
+	text-shadow: 2px 2px 0 var(--z-ink);
+}
+
+/* Kanji decorativo que acompana a los titulares (guion visual del banner) */
+.z-kanji {
+	font-family: var(--z-font-body);
+	font-weight: 900;
+	font-size: 1.75rem;
+	color: var(--z-ink);
+	opacity: 0.5;
+	letter-spacing: 0.3em;
+	line-height: 1;
+}
+
+/* Cabecera de seccion: titular + kanji + linea horizontal */
+.z-section-head {
+	display: flex;
+	align-items: flex-end;
+	justify-content: space-between;
+	gap: 1rem;
+	border-bottom: 3px double var(--z-ink);
+	padding-bottom: 0.5rem;
+	margin-bottom: 2rem;
+}
+
+/* Sello rojo circular, como los del banner */
+.z-stamp {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	font-family: var(--z-font-label);
+	font-weight: 700;
+	font-size: 0.7rem;
+	text-transform: uppercase;
+	letter-spacing: 0.1em;
+	color: var(--z-red);
+	border: 2px solid var(--z-red);
+	border-radius: 50%;
+	width: 62px;
+	height: 62px;
+	padding: 0.25rem;
+	text-align: center;
+	transform: rotate(-12deg);
+	opacity: 0.85;
+}
+
+/* Etiqueta rectangular en mayusculas (raza, genero, tipo...) */
+.z-tag {
+	display: inline-block;
+	font-family: var(--z-font-label);
+	font-size: 0.7rem;
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: 0.12em;
+	padding: 0.15rem 0.5rem;
+	border: 1px solid var(--z-ink);
+	background: transparent;
+	color: var(--z-ink);
+}
+
+.z-tag--red {
+	border-color: var(--z-red);
+	background: var(--z-red);
+	color: var(--z-paper-light);
+}
+
+/* Banner superior de la home */
+.z-banner {
+	width: 100%;
+	border: var(--z-border);
+	box-shadow: var(--z-shadow);
+	display: block;
+}
+
+
+/* ==========================================================================
+   4. NAVBAR Y BUSCADOR
+   ========================================================================== */
+.z-navbar {
+	background-color: var(--z-paper-light);
+	border-bottom: 3px solid var(--z-ink);
+	position: sticky;
+	top: 0;
+	z-index: 1030;
+	/* Por encima del contenido al hacer scroll */
+	box-shadow: 0 3px 0 rgba(27, 25, 23, 0.15);
+}
+
+/* Logo PNG de Dragon Ball Z */
+.z-logo {
+	height: 46px;
+	width: auto;
+	display: block;
+}
+
+/* Caja del buscador */
+.z-search-input {
+	font-family: var(--z-font-label);
+	background-color: var(--z-paper);
+	border: var(--z-border);
+	border-radius: var(--z-radius);
+	color: var(--z-ink);
+	padding: 0.45rem 0.75rem;
+}
+
+.z-search-input::placeholder {
+	color: var(--z-ink-soft);
+	opacity: 0.7;
+}
+
+.z-search-input:focus {
+	background-color: var(--z-paper-light);
+	border-color: var(--z-red);
+	box-shadow: 0 0 0 3px rgba(193, 39, 45, 0.15);
+	outline: none;
+}
+
+/* Lista de sugerencias del autocompletado */
+.z-suggestions {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	background-color: var(--z-paper-light);
+	border: var(--z-border);
+	border-top: none;
+	box-shadow: var(--z-shadow);
+	max-height: 340px;
+	overflow-y: auto;
+}
+
+.z-suggestion {
+	border-bottom: 1px solid rgba(27, 25, 23, 0.15);
+}
+
+.z-suggestion:last-child {
+	border-bottom: none;
+}
+
+.z-suggestion-link {
+	display: flex;
+	align-items: center;
+	gap: 0.6rem;
+	padding: 0.4rem 0.6rem;
+	color: var(--z-ink);
+	font-family: var(--z-font-label);
+	font-size: 0.9rem;
+}
+
+/* Estado resaltado: vale tanto para el hover del raton como para las flechas */
+.z-suggestion-link.is-active,
+.z-suggestion-link:hover {
+	background-color: var(--z-red);
+	color: var(--z-paper-light);
+}
+
+.z-suggestion-thumb {
+	width: 30px;
+	height: 30px;
+	object-fit: contain;
+	background-color: var(--z-paper-dark);
+	border: 1px solid var(--z-ink);
+	flex-shrink: 0;
+}
+
+/* Menu desplegable de favoritos */
+.z-dropdown {
+	background-color: var(--z-paper-light);
+	border: var(--z-border);
+	border-radius: var(--z-radius);
+	box-shadow: var(--z-shadow);
+	min-width: 280px;
+	padding: 0.5rem;
+}
+
+/* Cabecera "CHARACTERS" / "PLANETS" dentro del desplegable */
+.z-dropdown-head {
+	font-family: var(--z-font-label);
+	font-size: 0.7rem;
+	font-weight: 700;
+	text-transform: uppercase;
+	letter-spacing: 0.15em;
+	color: var(--z-red);
+	border-bottom: 1px solid var(--z-ink);
+	padding: 0.25rem 0.35rem;
+	margin-top: 0.35rem;
+}
+
+.z-fav-row {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 0.5rem;
+	padding: 0.35rem;
+	font-family: var(--z-font-label);
+	font-size: 0.9rem;
+}
+
+.z-fav-row:hover {
+	background-color: var(--z-paper-dark);
+}
+
+.z-fav-thumb {
+	width: 34px;
+	height: 34px;
+	object-fit: contain;
+	background-color: var(--z-paper-dark);
+	border: 1px solid var(--z-ink);
+	flex-shrink: 0;
+}
+
+
+/* ==========================================================================
+   5. TARJETAS (PERSONAJES Y PLANETAS)
+   Todas las tarjetas miden exactamente lo mismo para que las filas queden
+   alineadas: ancho fijo por el carrusel + alturas fijas aqui.
+   ========================================================================== */
+.z-card {
+	display: flex;
+	flex-direction: column;
+	height: 100%;
+	background-color: var(--z-paper-light);
+	border: var(--z-border);
+	border-radius: var(--z-radius);
+	box-shadow: var(--z-shadow);
+	overflow: hidden;
+	transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+
+.z-card:hover {
+	transform: translate(-2px, -2px);
+	box-shadow: 7px 7px 0 rgba(27, 25, 23, 0.85);
+}
+
+/*
+  Marco de la imagen.
+  Altura FIJA + object-fit: contain -> la figura completa siempre se ve
+  entera (incluida la cara). Con "cover" el navegador recortaba la parte
+  superior de algunos personajes y se perdian las cabezas.
+*/
+.z-card-figure {
+	height: 230px;
+	flex-shrink: 0;
+	background-color: var(--z-paper-dark);
+	border-bottom: var(--z-border);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 0.5rem;
+	position: relative;
+
+	/* Trama de puntos de fondo: recuerda al medio tono de la impresion */
+	background-image: radial-gradient(rgba(27, 25, 23, 0.12) 1px, transparent 1px);
+	background-size: 6px 6px;
+}
+
+.z-card-img {
+	max-height: 100%;
+	max-width: 100%;
+	object-fit: contain;
+	filter: drop-shadow(2px 2px 2px rgba(27, 25, 23, 0.3));
+}
+
+.z-card-body {
+	display: flex;
+	flex-direction: column;
+	flex-grow: 1;
+	padding: 0.9rem;
+}
+
+.z-card-title {
+	font-family: var(--z-font-display);
+	font-size: 1.35rem;
+	line-height: 1.1;
+	text-transform: uppercase;
+	letter-spacing: 0.02em;
+	color: var(--z-ink);
+	margin-bottom: 0.6rem;
+
+	/* Altura fija de 2 lineas: los nombres largos no descuadran la tarjeta */
+	min-height: 2.9rem;
+	display: -webkit-box;
+	-webkit-line-clamp: 2;
+	-webkit-box-orient: vertical;
+	overflow: hidden;
+}
+
+/* Lista de datos (raza, genero, ki) */
+.z-card-data {
+	list-style: none;
+	margin: 0 0 0.75rem 0;
+	padding: 0;
+	font-size: 0.85rem;
+}
+
+.z-card-data li {
+	display: flex;
+	justify-content: space-between;
+	gap: 0.5rem;
+	border-bottom: 1px dotted rgba(27, 25, 23, 0.3);
+	padding: 0.2rem 0;
+}
+
+.z-card-data .z-label {
+	font-family: var(--z-font-label);
+	font-size: 0.7rem;
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: 0.1em;
+	color: var(--z-ink-soft);
+}
+
+.z-card-data .z-value {
+	font-weight: 600;
+	text-align: right;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	max-width: 60%;
+}
+
+/*
+  Descripcion de los planetas recortada a 3 lineas.
+  Sin esto, un planeta con un texto largo hacia su tarjeta mucho mas alta
+  que las demas y la fila quedaba descuadrada.
+*/
+.z-card-text {
+	font-size: 0.85rem;
+	line-height: 1.45;
+	color: var(--z-ink-soft);
+	margin-bottom: 0.75rem;
+	display: -webkit-box;
+	-webkit-line-clamp: 3;
+	-webkit-box-orient: vertical;
+	overflow: hidden;
+	min-height: 3.7rem;
+}
+
+/* Pie de la tarjeta: se empuja abajo para que todas alineen los botones */
+.z-card-foot {
+	margin-top: auto;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 0.5rem;
+}
+
+
+/* ==========================================================================
+   6. CARRUSEL
+   Solo maquetacion: una "ventana" con overflow oculto y una pista interior
+   que se desplaza con transform. La logica de indices vive en Carousel.jsx.
+   ========================================================================== */
+.z-carousel-viewport {
+	overflow: hidden;
+	padding: 6px;
+	/* Espacio para que no se corte la sombra dura de las tarjetas */
+}
+
+.z-carousel-track {
+	display: flex;
+	transition: transform 0.35s ease;
+}
+
+.z-carousel-slide {
+	flex-shrink: 0;
+	padding: 0 0.6rem;
+	/* Separacion entre tarjetas */
+	box-sizing: border-box;
+}
+
+/* Flechas de navegacion */
+.z-arrow {
+	width: 44px;
+	height: 44px;
+	flex-shrink: 0;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	background-color: var(--z-paper-light);
+	color: var(--z-ink);
+	border: var(--z-border);
+	border-radius: var(--z-radius);
+	box-shadow: 3px 3px 0 rgba(27, 25, 23, 0.85);
+	transition: all 0.15s ease;
+	cursor: pointer;
+}
+
+.z-arrow:hover:not(:disabled) {
+	background-color: var(--z-red);
+	color: var(--z-paper-light);
+	border-color: var(--z-red);
+}
+
+/* Flecha desactivada al llegar al principio o al final de la lista */
+.z-arrow:disabled {
+	opacity: 0.3;
+	cursor: not-allowed;
+	box-shadow: none;
+}
+
+/* Contador "03 / 58" a la derecha de la cabecera de seccion */
+.z-counter {
+	font-family: var(--z-font-label);
+	font-size: 0.8rem;
+	font-weight: 600;
+	letter-spacing: 0.15em;
+	color: var(--z-ink-soft);
+}
+
+
+/* ==========================================================================
+   7. PAGINAS DE DETALLE
+   ========================================================================== */
+
+/* Marco de la imagen grande del personaje / planeta */
+.z-detail-figure {
+	background-color: var(--z-paper-light);
+	border: var(--z-border);
+	box-shadow: var(--z-shadow);
+	height: 420px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 1rem;
+	background-image: radial-gradient(rgba(27, 25, 23, 0.12) 1px, transparent 1px);
+	background-size: 7px 7px;
+}
+
+.z-detail-img {
+	max-height: 100%;
+	max-width: 100%;
+	object-fit: contain;
+	filter: drop-shadow(3px 3px 4px rgba(27, 25, 23, 0.35));
+}
+
+/* Ficha de datos del detalle */
+.z-datasheet {
+	list-style: none;
+	margin: 0 0 1.25rem 0;
+	padding: 0;
+	border-top: 1px solid var(--z-ink);
+}
+
+.z-datasheet li {
+	display: flex;
+	justify-content: space-between;
+	gap: 1rem;
+	padding: 0.5rem 0.25rem;
+	border-bottom: 1px solid rgba(27, 25, 23, 0.25);
+}
+
+.z-datasheet .z-label {
+	font-family: var(--z-font-label);
+	font-size: 0.75rem;
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: 0.12em;
+	color: var(--z-ink-soft);
+}
+
+.z-datasheet .z-value {
+	font-weight: 600;
+	text-align: right;
+}
+
+/* Bloque de descripcion con barra roja a la izquierda */
+.z-description {
+	border-left: 4px solid var(--z-red);
+	padding-left: 1rem;
+	line-height: 1.7;
+	color: var(--z-ink-soft);
+	margin-bottom: 1.25rem;
+}
+
+/* Tarjeta pequena de transformacion */
+.z-transformation {
+	width: 160px;
+	background-color: var(--z-paper-light);
+	border: var(--z-border);
+	box-shadow: 3px 3px 0 rgba(27, 25, 23, 0.85);
+	text-align: center;
+	transition: transform 0.18s ease;
+}
+
+.z-transformation:hover {
+	transform: translateY(-3px);
+}
+
+.z-transformation-figure {
+	height: 140px;
+	background-color: var(--z-paper-dark);
+	border-bottom: var(--z-border);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 0.4rem;
+	background-image: radial-gradient(rgba(27, 25, 23, 0.12) 1px, transparent 1px);
+	background-size: 5px 5px;
+}
+
+.z-transformation-figure img {
+	max-height: 100%;
+	max-width: 100%;
+	object-fit: contain;
+}
+
+.z-transformation-name {
+	font-family: var(--z-font-label);
+	font-size: 0.8rem;
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: 0.05em;
+	margin: 0;
+	padding: 0.4rem 0.3rem 0;
+	line-height: 1.2;
+}
+
+.z-transformation-ki {
+	font-size: 0.75rem;
+	color: var(--z-red);
+	font-weight: 600;
+	margin: 0;
+	padding: 0.1rem 0.3rem 0.5rem;
+}
+
+
+/* ==========================================================================
+   8. BOTONES
+   ========================================================================== */
+.z-btn {
+	font-family: var(--z-font-label);
+	font-size: 0.78rem;
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: 0.1em;
+	padding: 0.4rem 0.85rem;
+	border: var(--z-border);
+	border-radius: var(--z-radius);
+	background-color: var(--z-paper-light);
+	color: var(--z-ink);
+	box-shadow: 3px 3px 0 rgba(27, 25, 23, 0.85);
+	transition: all 0.15s ease;
+	cursor: pointer;
+	display: inline-flex;
+	align-items: center;
+	gap: 0.4rem;
+}
+
+.z-btn:hover {
+	background-color: var(--z-ink);
+	color: var(--z-paper-light);
+	transform: translate(-1px, -1px);
+	box-shadow: 4px 4px 0 rgba(27, 25, 23, 0.85);
+}
+
+/* Variante roja: accion principal */
+.z-btn--red {
+	background-color: var(--z-red);
+	border-color: var(--z-red);
+	color: var(--z-paper-light);
+}
+
+.z-btn--red:hover {
+	background-color: var(--z-red-dark);
+	border-color: var(--z-red-dark);
+	color: var(--z-paper-light);
+}
+
+/* Boton cuadrado del corazon de favoritos */
+.z-btn-fav {
+	width: 38px;
+	height: 34px;
+	padding: 0;
+	justify-content: center;
+	flex-shrink: 0;
+}
+
+/* Corazon marcado: relleno rojo */
+.z-btn-fav.is-fav {
+	background-color: var(--z-red);
+	border-color: var(--z-red);
+	color: var(--z-paper-light);
+}
+
+.z-btn-fav.is-fav:hover {
+	background-color: var(--z-red-dark);
+	border-color: var(--z-red-dark);
+}
+
+/* Boton "x" para quitar un favorito desde el desplegable */
+.z-btn-remove {
+	background: none;
+	border: none;
+	color: var(--z-ink-soft);
+	padding: 0 0.25rem;
+	cursor: pointer;
+	transition: color 0.15s ease;
+}
+
+.z-btn-remove:hover {
+	color: var(--z-red);
+}
+
+
+/* ==========================================================================
+   9. FOOTER
+   ========================================================================== */
+.z-footer {
+	margin-top: auto;
+	background-color: var(--z-ink);
+	color: var(--z-paper);
+	border-top: 4px double var(--z-paper-dark);
+	padding: 2rem 1rem 1.5rem;
+	text-align: center;
+	font-family: var(--z-font-label);
+	font-size: 0.8rem;
+	letter-spacing: 0.05em;
+}
+
+.z-footer a {
+	color: var(--z-paper-light);
+	text-decoration: underline;
+}
+
+.z-footer a:hover {
+	color: var(--z-red);
+}
+
+.z-footer-kanji {
+	font-family: var(--z-font-body);
+	font-weight: 900;
+	font-size: 1.5rem;
+	letter-spacing: 0.5em;
+	color: var(--z-red);
+	margin-bottom: 0.75rem;
+}
+
+
+/* ==========================================================================
+   10. RESPONSIVE
+   El numero de tarjetas visibles del carrusel se calcula en JS (Carousel.jsx)
+   con los mismos puntos de corte que se usan aqui.
+   ========================================================================== */
+@media (max-width: 991px) {
+	.z-detail-figure {
+		height: 320px;
+	}
+
+	.z-card-figure {
+		height: 200px;
+	}
+}
+
+@media (max-width: 767px) {
+	.z-section-head {
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 0.5rem;
+	}
+
+	.z-kanji {
+		font-size: 1.25rem;
+	}
+}
