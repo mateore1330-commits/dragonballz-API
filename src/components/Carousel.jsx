@@ -29,8 +29,8 @@ const getVisibleCount = () => {
 };
 
 export const Carousel = ({ title, kanji, items, renderItem }) => {
-	// Indice del primer elemento visible dentro de la ventana
-	const [index, setIndex] = useState(0);
+	// Indice del primer elemento visible, tal y como lo dejaron las flechas
+	const [rawIndex, setIndex] = useState(0);
 	// Cuantas tarjetas caben a la vez (cambia con el tamano de la pantalla)
 	const [visibleCount, setVisibleCount] = useState(getVisibleCount);
 
@@ -44,13 +44,17 @@ export const Carousel = ({ title, kanji, items, renderItem }) => {
 	// Ultimo indice valido: evita dejar huecos vacios al final del carrusel
 	const maxIndex = Math.max(0, items.length - visibleCount);
 
-	// Si la pantalla se encoge y el indice actual se sale de rango, lo corregimos
-	useEffect(() => {
-		setIndex((prev) => Math.min(prev, maxIndex));
-	}, [maxIndex]);
+	/*
+	  Indice que se usa de verdad. Si la pantalla se ensancha y caben mas
+	  tarjetas, el indice guardado puede quedar fuera de rango: se recorta
+	  aqui, al pintar, en lugar de corregir el estado con un useEffect (eso
+	  obligaria a React a pintar dos veces seguidas).
+	*/
+	const index = Math.min(rawIndex, maxIndex);
 
-	const goPrev = () => setIndex((prev) => Math.max(0, prev - 1));
-	const goNext = () => setIndex((prev) => Math.min(maxIndex, prev + 1));
+	// Las flechas parten del indice recortado, no del guardado
+	const goPrev = () => setIndex(Math.max(0, index - 1));
+	const goNext = () => setIndex(Math.min(maxIndex, index + 1));
 
 	// Ancho de cada tarjeta en % — el mismo valor sirve para desplazar la fila
 	const slideWidth = 100 / visibleCount;
