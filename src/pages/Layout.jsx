@@ -33,15 +33,24 @@ export const Layout = () => {
       La condicion isStale() es la que evita las llamadas innecesarias: si el
       store se recupero de localStorage y los datos siguen siendo recientes,
       no se pide nada a la API.
+
+      Hay un efecto por lista, y no uno para las dos: cada efecto vuelve a
+      ejecutarse cuando cambia su propia marca de tiempo, y en ese momento
+      sus datos ya estan frescos, asi que no repite la peticion. Con un solo
+      efecto, al llegar los personajes se volverian a pedir los planetas
+      aunque su peticion siguiera en marcha.
     */
     useEffect(() => {
         if (isStale(store.characterFetchedAt)) {
             getAllCharacter().then((data) => dispatch({ type: "set_characters", payload: data.items }))
         }
+    }, [store.characterFetchedAt, dispatch])
+
+    useEffect(() => {
         if (isStale(store.planetsFetchedAt)) {
             getAllPlanets().then((data) => dispatch({ type: "set_planets", payload: data.items }))
         }
-    }, [])
+    }, [store.planetsFetchedAt, dispatch])
 
     return (
         <ScrollToTop>
