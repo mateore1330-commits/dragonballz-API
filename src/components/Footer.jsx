@@ -7,7 +7,7 @@
 export const Footer = () => (
 	<footer className="z-footer">
 		{/* Kanji decorativo: "guerrero / vinculo / destino / esperanza" */}
-		<p className="z-footer-kanji mb-2">戦士絆運命希望</p>
+		<p className="z-footer-kanji mb-2" aria-hidden="true">戦士絆運命希望</p>
 
 		<p className="mb-1">
 			Datos de la{" "}

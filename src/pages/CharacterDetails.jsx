@@ -58,7 +58,7 @@ export const CharacterDetails = () => {
 	return (
 		<main className="container my-5">
 			<Link to="/" className="z-btn mb-4">
-				<i className="fa-solid fa-arrow-left"></i>
+				<i className="fa-solid fa-arrow-left" aria-hidden="true"></i>
 				Volver
 			</Link>
 
@@ -81,9 +81,10 @@ export const CharacterDetails = () => {
 						<button
 							className={`z-btn z-btn-fav ${isFavorite ? "is-fav" : ""}`}
 							onClick={toggleFavorite}
+							aria-pressed={isFavorite}
 							aria-label={isFavorite ? `Quitar ${character.name} de favoritos` : `Añadir ${character.name} a favoritos`}
 						>
-							<i className={`${isFavorite ? "fa-solid" : "fa-regular"} fa-heart`}></i>
+							<i className={`${isFavorite ? "fa-solid" : "fa-regular"} fa-heart`} aria-hidden="true"></i>
 						</button>
 					</div>
 
@@ -104,7 +105,7 @@ export const CharacterDetails = () => {
 					*/}
 					{character.originPlanet && (
 						<Link to={`/planets/${character.originPlanet.id}`} className="z-btn">
-							<i className="fa-solid fa-earth-americas"></i>
+							<i className="fa-solid fa-earth-americas" aria-hidden="true"></i>
 							Planeta de origen: {character.originPlanet.name}
 						</Link>
 					)}
@@ -116,7 +117,7 @@ export const CharacterDetails = () => {
 				<div className="z-section-head">
 					<div className="d-flex align-items-end gap-3 flex-wrap">
 						<h2 className="z-title z-title--sm">Transformaciones</h2>
-						<span className="z-kanji d-none d-md-inline">変身</span>
+						<span className="z-kanji d-none d-md-inline" aria-hidden="true">変身</span>
 					</div>
 					<span className="z-counter">{String(transformations.length).padStart(2, "0")} FORMAS</span>
 				</div>

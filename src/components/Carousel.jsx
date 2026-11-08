@@ -65,7 +65,7 @@ export const Carousel = ({ title, kanji, items, renderItem }) => {
 			<div className="z-section-head">
 				<div className="d-flex align-items-end gap-3 flex-wrap">
 					<h2 className="z-title">{title}</h2>
-					<span className="z-kanji d-none d-md-inline">{kanji}</span>
+					<span className="z-kanji d-none d-md-inline" aria-hidden="true">{kanji}</span>
 				</div>
 
 				<div className="d-flex align-items-center gap-3">
@@ -82,7 +82,7 @@ export const Carousel = ({ title, kanji, items, renderItem }) => {
 						disabled={index === 0}
 						aria-label={`Anterior en ${title}`}
 					>
-						<i className="fa-solid fa-chevron-left"></i>
+						<i className="fa-solid fa-chevron-left" aria-hidden="true"></i>
 					</button>
 					<button
 						className="z-arrow"
@@ -90,7 +90,7 @@ export const Carousel = ({ title, kanji, items, renderItem }) => {
 						disabled={index >= maxIndex}
 						aria-label={`Siguiente en ${title}`}
 					>
-						<i className="fa-solid fa-chevron-right"></i>
+						<i className="fa-solid fa-chevron-right" aria-hidden="true"></i>
 					</button>
 				</div>
 			</div>

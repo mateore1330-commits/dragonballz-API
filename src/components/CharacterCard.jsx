@@ -62,16 +62,17 @@ export const CharacterCard = ({ id, image, name, race, gender, ki }) => {
 				<div className="z-card-foot">
 					<Link to={`/characters/${id}`} className="z-btn z-btn--red">
 						Leer más 
-						<i className="fa-solid fa-angle-right"></i>
+						<i className="fa-solid fa-angle-right" aria-hidden="true"></i>
 					</Link>
 
 					<button
 						className={`z-btn z-btn-fav ${isFavorite ? "is-fav" : ""}`}
 						onClick={toggleFavorite}
+						aria-pressed={isFavorite}
 						aria-label={isFavorite ? `Quitar ${name} de favoritos` : `Añadir ${name} a favoritos`}
 					>
 						{/* Corazon relleno si es favorito, contorno si no */}
-						<i className={`${isFavorite ? "fa-solid" : "fa-regular"} fa-heart`}></i>
+						<i className={`${isFavorite ? "fa-solid" : "fa-regular"} fa-heart`} aria-hidden="true"></i>
 					</button>
 				</div>
 			</div>

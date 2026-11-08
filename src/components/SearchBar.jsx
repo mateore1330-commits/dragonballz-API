@@ -122,7 +122,7 @@ export const SearchBar = () => {
 								// por encima, esa sugerencia pasa a ser la resaltada
 								onMouseEnter={() => setHighlightedIndex(index)}
 							>
-								<img src={item.image} alt={item.name} className="z-suggestion-thumb" />
+								<img src={item.image} alt="" className="z-suggestion-thumb" />
 								<span className="text-truncate">{item.name}</span>
 								<span className="ms-auto text-uppercase" style={{ fontSize: "0.65rem", opacity: 0.7 }}>
 									{item.type}

@@ -27,7 +27,7 @@ const ListPlaceholder = ({ title, kanji, failed, onRetry }) => (
 		<div className="z-section-head">
 			<div className="d-flex align-items-end gap-3 flex-wrap">
 				<h2 className="z-title">{title}</h2>
-				<span className="z-kanji d-none d-md-inline">{kanji}</span>
+				<span className="z-kanji d-none d-md-inline" aria-hidden="true">{kanji}</span>
 			</div>
 		</div>
 
