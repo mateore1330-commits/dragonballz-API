@@ -1,25 +1,8 @@
-// For format details, see https://aka.ms/devcontainer.json. For config options, see the
-// README at: https://github.com/devcontainers/templates/tree/main/src/javascript-node
+// Entorno de desarrollo del blog: Node, GitHub CLI y las extensiones de VS Code del proyecto.
+// Referencia del formato: https://containers.dev/implementors/json_reference/
 {
-	"name": "React + Vite",
+	"name": "Blog Dragon Ball Z",
 	"image": "mcr.microsoft.com/devcontainers/javascript-node:0-20",
-	"customizations": {
-		"extensions": [
-			"vscode-eslint",
-			"vscode-jest"
-		],
-		"settings": {
-			"editor.defaultFormatter": "esbenp.prettier-vscode",
-			"eslint.validate": [
-				"javascript",
-				"typescript"
-			],
-			"workbench.editorAssociations": {
-				"*.md": "vscode.markdown.preview.editor"
-			}
-		}
-	},
-	"workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
 	"features": {
 		"ghcr.io/devcontainers/features/github-cli:1": {
 			"installDirectlyFromGitHubRelease": true,
@@ -30,13 +13,25 @@
 			"version": "lts"
 		}
 	},
-	// Features to add to the dev container. More info: https://containers.dev/features.
-	// "features": {},
-	// Use 'forwardPorts' to make a list of ports inside the container available locally.
-	// This can be used to network with other containers or the host.
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"dbaeumer.vscode-eslint",
+				"esbenp.prettier-vscode"
+			],
+			"settings": {
+				"editor.defaultFormatter": "esbenp.prettier-vscode",
+				"eslint.validate": [
+					"javascript",
+					"javascriptreact"
+				]
+			}
+		}
+	},
+	"workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
+	// Puerto del servidor de desarrollo de Vite (ver vite.config.js)
 	"forwardPorts": [
 		3000
 	],
-	"onCreateCommand": "npm ci && (cp .env.example .env || echo \".env creation failed\")",
-	"postCreateCommand": "npm install -g pnpm"
+	"onCreateCommand": "npm ci"
 }
