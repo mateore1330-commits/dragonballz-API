@@ -37,6 +37,61 @@ export const CACHE_TTL = 1000 * 60 * 60;
  */
 export const isStale = (fetchedAt) => !fetchedAt || Date.now() - fetchedAt > CACHE_TTL;
 
+// Clave con la que se guarda el store en el localStorage del navegador
+const STORAGE_KEY = "store";
+
+/**
+ * Estado de partida cuando no hay nada guardado.
+ * Sus claves son tambien las unicas que se guardan en localStorage.
+ */
+const emptyStore = () => ({
+  favorites: [],           // Personajes y planetas marcados con el corazon
+  characters: [],          // Listado completo de personajes
+  planets: [],             // Listado completo de planetas
+  characterFetchedAt: null, // Cuando se descargaron los personajes
+  planetsFetchedAt: null,   // Cuando se descargaron los planetas
+});
+
+// Comprobaciones de forma para lo que llega de localStorage
+const isList = (value) => Array.isArray(value) && value.every((item) => item && typeof item.id === "number");
+const isFavorite = (fav) =>
+  fav && typeof fav.id === "number" && (fav.type === "character" || fav.type === "planet") && typeof fav.name === "string";
+const isTimestamp = (value) => value === null || typeof value === "number";
+
+/**
+ * Lee la copia guardada en localStorage, sin fiarse de ella.
+ *
+ * Puede estar corrupta (JSON roto), venir de una version antigua de la web
+ * con otra forma, o el navegador puede bloquear el acceso (modo privado).
+ * En cualquiera de esos casos la app no debe romperse: se recupera lo que
+ * sea valido y el resto vuelve al valor de partida.
+ *
+ * Si una lista no es valida, tambien se olvida su marca de tiempo, para que
+ * Layout.jsx la vuelva a descargar.
+ *
+ * @returns {Object|null} Lo que se pudo recuperar, o null si no hay nada
+ */
+const readSavedStore = () => {
+  try {
+    const saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
+    if (!saved || typeof saved !== "object") return null;
+
+    const store = emptyStore();
+    if (Array.isArray(saved.favorites)) store.favorites = saved.favorites.filter(isFavorite);
+    if (isList(saved.characters) && isTimestamp(saved.characterFetchedAt)) {
+      store.characters = saved.characters;
+      store.characterFetchedAt = saved.characterFetchedAt;
+    }
+    if (isList(saved.planets) && isTimestamp(saved.planetsFetchedAt)) {
+      store.planets = saved.planets;
+      store.planetsFetchedAt = saved.planetsFetchedAt;
+    }
+    return store;
+  } catch {
+    return null;
+  }
+};
+
 /**
  * Estado inicial de la aplicacion.
  *
@@ -45,17 +100,26 @@ export const isStale = (fetchedAt) => !fetchedAt || Date.now() - fetchedAt > CAC
  * favoritos y las listas ya descargadas sobreviven a un F5 y la web no
  * vuelve a llamar a la API en cada recarga.
  */
-export const initialStore = () => {
-  const saved = localStorage.getItem("store");
-  if (saved) return JSON.parse(saved);
+export const initialStore = () => readSavedStore() ?? emptyStore();
 
-  return {
-    favorites: [],           // Personajes y planetas marcados con el corazon
-    characters: [],          // Listado completo de personajes
-    planets: [],             // Listado completo de planetas
-    characterFetchedAt: null, // Cuando se descargaron los personajes
-    planetsFetchedAt: null,   // Cuando se descargaron los planetas
-  };
+/**
+ * Guarda en localStorage la parte del store que debe sobrevivir a un F5.
+ *
+ * Solo se guardan las claves de emptyStore(): lo demas (por ejemplo, si una
+ * descarga fallo) solo tiene sentido mientras la pagina esta abierta.
+ * Si el navegador no deja guardar (modo privado, almacenamiento lleno), la
+ * web sigue funcionando; simplemente no recordara nada al recargar.
+ *
+ * @param {Object} store Estado actual
+ */
+export const saveStore = (store) => {
+  const persisted = {};
+  for (const key of Object.keys(emptyStore())) persisted[key] = store[key];
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(persisted));
+  } catch {
+    // Sin almacenamiento disponible: no hay nada mas que hacer
+  }
 };
 
 /**
