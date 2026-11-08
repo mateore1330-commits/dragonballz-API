@@ -1,5 +1,5 @@
-import { useContext, useReducer, createContext, useEffect } from "react";
-import storeReducer, { initialStore } from "../store"
+import { useContext } from "react";
+import { StoreContext } from "./storeContext.js";
 
 /* ==========================================================================
    HOOK DEL ESTADO GLOBAL
@@ -8,43 +8,11 @@ import storeReducer, { initialStore } from "../store"
    React, para no tener que ir pasando el estado de padres a hijos por props
    nivel por nivel.
 
-   Se compone de dos piezas:
-     - StoreProvider    : envuelve la app y reparte el estado (se usa en main.jsx)
-     - useGlobalReducer : atajo para que cualquier componente lea el estado
+   Se compone de tres piezas:
+     - storeContext.js    : el contexto por el que viaja el estado
+     - StoreProvider.jsx  : envuelve la app y reparte el estado (main.jsx)
+     - useGlobalReducer   : este hook, el atajo para leer el estado
    ========================================================================== */
-
-// Contexto donde viaja el estado global. Se llama "store" para no confundirlo
-// con los useState locales de cada componente.
-const StoreContext = createContext()
-
-/**
- * Provider: crea el estado con useReducer y lo pone a disposicion de todos
- * los componentes que tenga por debajo en el arbol.
- */
-export function StoreProvider({ children }) {
-    // store    -> los datos actuales
-    // dispatch -> la funcion para lanzar acciones al reducer
-    const [store, dispatch] = useReducer(storeReducer, initialStore())
-
-    /*
-      Persistencia automatica en el navegador.
-
-      Este efecto se ejecuta cada vez que el store cambia y vuelca una copia
-      completa en localStorage. Al estar centralizado aqui, no hace falta
-      acordarse de guardar nada en cada dispatch suelto: favoritos, personajes
-      y planetas se guardan solos.
-
-      Es la pieza que permite que, al recargar la pagina, initialStore()
-      recupere los datos y la web no tenga que llamar de nuevo a la API.
-    */
-    useEffect(() => {
-        localStorage.setItem("store", JSON.stringify(store))
-    }, [store])
-
-    return <StoreContext.Provider value={{ store, dispatch }}>
-        {children}
-    </StoreContext.Provider>
-}
 
 /**
  * Hook personalizado para consumir el estado global.
