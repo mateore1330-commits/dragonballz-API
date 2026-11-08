@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useParams } from "react-router";
 import { getCharacter } from "../services/services.js";
 import useGlobalReducer from "../hooks/useGlobalReducer.jsx";
 

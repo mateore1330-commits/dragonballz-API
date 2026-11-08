@@ -2,7 +2,7 @@ import {
     createBrowserRouter,
     createRoutesFromElements,
     Route,
-} from "react-router-dom";
+} from "react-router";
 import { Layout } from "./pages/Layout";
 import { Home } from "./pages/Home";
 import { CharacterDetails } from "./pages/CharacterDetails";
