@@ -98,6 +98,44 @@ a:hover {
 	color: var(--z-red-dark);
 }
 
+/*
+  Foco visible para quien navega con el teclado.
+  :focus-visible solo se activa con el teclado (Tab), no al hacer clic con
+  el raton, asi que no ensucia el diseno para quien usa el raton.
+*/
+:focus-visible {
+	outline: 3px solid var(--z-red);
+	outline-offset: 2px;
+}
+
+/* El buscador ya marca el foco con su borde rojo y su sombra */
+.z-search-input:focus-visible {
+	outline: none;
+}
+
+/* Destino del enlace "Saltar al contenido": recibe el foco, pero sin marco */
+#contenido:focus {
+	outline: none;
+}
+
+/*
+  Enlace "Saltar al contenido" (Layout.jsx). Bootstrap lo oculta con
+  .visually-hidden-focusable hasta que recibe el foco; entonces aparece
+  arriba a la izquierda, por encima del navbar.
+*/
+.z-skip-link:focus {
+	position: absolute;
+	top: 0.5rem;
+	left: 0.5rem;
+	z-index: 2000;
+	padding: 0.5rem 1rem;
+	background-color: var(--z-ink);
+	color: var(--z-paper-light);
+	font-family: var(--z-font-label);
+	text-transform: uppercase;
+	letter-spacing: 0.1em;
+}
+
 
 /* ==========================================================================
    3. TITULARES Y ELEMENTOS DECORATIVOS

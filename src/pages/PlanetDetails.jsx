@@ -4,6 +4,8 @@ import { getPlanet } from "../services/services.js";
 import useGlobalReducer from "../hooks/useGlobalReducer.jsx";
 import { useApiResource } from "../hooks/useApiResource.js";
 import { ResourceStatus } from "../components/ResourceStatus.jsx";
+import { usePageTitle } from "../hooks/usePageTitle.js";
+import { resourceTitle } from "../hooks/resourceTitle.js";
 
 /* ==========================================================================
    PAGINA DE DETALLE DE UN PLANETA
@@ -22,6 +24,7 @@ export const PlanetDetails = () => {
 	const { id } = useParams();
 	const { store, dispatch } = useGlobalReducer();
 	const { status, data: planet, retry } = useApiResource(getPlanet, id);
+	usePageTitle(resourceTitle(status, planet?.name, "Planeta no encontrado"));
 
 	// Mientras no hay planeta (cargando, no existe o error) se avisa y se sale
 	if (status !== "ready") {
@@ -47,7 +50,7 @@ export const PlanetDetails = () => {
 	return (
 		<main className="container my-5">
 			<Link to="/" className="z-btn mb-4">
-				<i className="fa-solid fa-arrow-left"></i>
+				<i className="fa-solid fa-arrow-left" aria-hidden="true"></i>
 				Volver
 			</Link>
 
@@ -70,9 +73,10 @@ export const PlanetDetails = () => {
 						<button
 							className={`z-btn z-btn-fav ${isFavorite ? "is-fav" : ""}`}
 							onClick={toggleFavorite}
-							aria-label={isFavorite ? "Quitar de favoritos" : "Anadir a favoritos"}
+							aria-pressed={isFavorite}
+							aria-label={isFavorite ? `Quitar ${planet.name} de favoritos` : `Añadir ${planet.name} a favoritos`}
 						>
-							<i className={`${isFavorite ? "fa-solid" : "fa-regular"} fa-heart`}></i>
+							<i className={`${isFavorite ? "fa-solid" : "fa-regular"} fa-heart`} aria-hidden="true"></i>
 						</button>
 					</div>
 
@@ -100,7 +104,7 @@ export const PlanetDetails = () => {
 				<div className="z-section-head">
 					<div className="d-flex align-items-end gap-3 flex-wrap">
 						<h2 className="z-title z-title--sm">Personajes</h2>
-						<span className="z-kanji d-none d-md-inline">住民</span>
+						<span className="z-kanji d-none d-md-inline" aria-hidden="true">住民</span>
 					</div>
 					<span className="z-counter">DE {planet.name.toUpperCase()}</span>
 				</div>

@@ -3,6 +3,8 @@ import { getCharacter } from "../services/services.js";
 import useGlobalReducer from "../hooks/useGlobalReducer.jsx";
 import { useApiResource } from "../hooks/useApiResource.js";
 import { ResourceStatus } from "../components/ResourceStatus.jsx";
+import { usePageTitle } from "../hooks/usePageTitle.js";
+import { resourceTitle } from "../hooks/resourceTitle.js";
 
 /* ==========================================================================
    PAGINA DE DETALLE DE UN PERSONAJE
@@ -28,6 +30,7 @@ export const CharacterDetails = () => {
 	  y dice en que punto esta la peticion (ver hooks/useApiResource.js).
 	*/
 	const { status, data: character, retry } = useApiResource(getCharacter, id);
+	usePageTitle(resourceTitle(status, character?.name, "Personaje no encontrado"));
 
 	// Mientras no hay personaje (cargando, no existe o error) se avisa y se
 	// sale: el resto de la pagina da por hecho que "character" tiene datos
@@ -55,7 +58,7 @@ export const CharacterDetails = () => {
 	return (
 		<main className="container my-5">
 			<Link to="/" className="z-btn mb-4">
-				<i className="fa-solid fa-arrow-left"></i>
+				<i className="fa-solid fa-arrow-left" aria-hidden="true"></i>
 				Volver
 			</Link>
 
@@ -78,9 +81,10 @@ export const CharacterDetails = () => {
 						<button
 							className={`z-btn z-btn-fav ${isFavorite ? "is-fav" : ""}`}
 							onClick={toggleFavorite}
-							aria-label={isFavorite ? "Quitar de favoritos" : "Anadir a favoritos"}
+							aria-pressed={isFavorite}
+							aria-label={isFavorite ? `Quitar ${character.name} de favoritos` : `Añadir ${character.name} a favoritos`}
 						>
-							<i className={`${isFavorite ? "fa-solid" : "fa-regular"} fa-heart`}></i>
+							<i className={`${isFavorite ? "fa-solid" : "fa-regular"} fa-heart`} aria-hidden="true"></i>
 						</button>
 					</div>
 
@@ -101,7 +105,7 @@ export const CharacterDetails = () => {
 					*/}
 					{character.originPlanet && (
 						<Link to={`/planets/${character.originPlanet.id}`} className="z-btn">
-							<i className="fa-solid fa-earth-americas"></i>
+							<i className="fa-solid fa-earth-americas" aria-hidden="true"></i>
 							Planeta de origen: {character.originPlanet.name}
 						</Link>
 					)}
@@ -113,7 +117,7 @@ export const CharacterDetails = () => {
 				<div className="z-section-head">
 					<div className="d-flex align-items-end gap-3 flex-wrap">
 						<h2 className="z-title z-title--sm">Transformaciones</h2>
-						<span className="z-kanji d-none d-md-inline">変身</span>
+						<span className="z-kanji d-none d-md-inline" aria-hidden="true">変身</span>
 					</div>
 					<span className="z-counter">{String(transformations.length).padStart(2, "0")} FORMAS</span>
 				</div>

@@ -65,7 +65,7 @@ export const Carousel = ({ title, kanji, items, renderItem }) => {
 			<div className="z-section-head">
 				<div className="d-flex align-items-end gap-3 flex-wrap">
 					<h2 className="z-title">{title}</h2>
-					<span className="z-kanji d-none d-md-inline">{kanji}</span>
+					<span className="z-kanji d-none d-md-inline" aria-hidden="true">{kanji}</span>
 				</div>
 
 				<div className="d-flex align-items-center gap-3">
@@ -82,7 +82,7 @@ export const Carousel = ({ title, kanji, items, renderItem }) => {
 						disabled={index === 0}
 						aria-label={`Anterior en ${title}`}
 					>
-						<i className="fa-solid fa-chevron-left"></i>
+						<i className="fa-solid fa-chevron-left" aria-hidden="true"></i>
 					</button>
 					<button
 						className="z-arrow"
@@ -90,7 +90,7 @@ export const Carousel = ({ title, kanji, items, renderItem }) => {
 						disabled={index >= maxIndex}
 						aria-label={`Siguiente en ${title}`}
 					>
-						<i className="fa-solid fa-chevron-right"></i>
+						<i className="fa-solid fa-chevron-right" aria-hidden="true"></i>
 					</button>
 				</div>
 			</div>
@@ -101,15 +101,26 @@ export const Carousel = ({ title, kanji, items, renderItem }) => {
 					className="z-carousel-track"
 					style={{ transform: `translateX(-${index * slideWidth}%)` }}
 				>
-					{items.map((item) => (
-						<div
-							key={`${item.id}-${item.name}`}
-							className="z-carousel-slide"
-							style={{ width: `${slideWidth}%` }}
-						>
-							{renderItem(item)}
-						</div>
-					))}
+					{items.map((item, position) => {
+						/*
+						  Las tarjetas que quedan fuera de la ventana siguen en la
+						  pagina (solo estan desplazadas). "inert" las saca del orden
+						  del tabulador y del lector de pantalla; sin el, el foco del
+						  teclado acabaria en un "Leer mas" que no se ve.
+						  En React 18 "inert" se pasa como texto: "" = activado.
+						*/
+						const isVisible = position >= index && position < index + visibleCount;
+						return (
+							<div
+								key={`${item.id}-${item.name}`}
+								className="z-carousel-slide"
+								style={{ width: `${slideWidth}%` }}
+								inert={isVisible ? undefined : ""}
+							>
+								{renderItem(item)}
+							</div>
+						);
+					})}
 				</div>
 			</div>
 		</section>

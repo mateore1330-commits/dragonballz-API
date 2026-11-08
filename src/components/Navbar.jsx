@@ -28,7 +28,7 @@ export const Navbar = () => {
 		<li key={`${fav.type}-${fav.id}`}>
 			<div className="z-fav-row">
 				<div className="d-flex align-items-center gap-2 overflow-hidden">
-					<img src={fav.image} alt={fav.name} className="z-fav-thumb" />
+					<img src={fav.image} alt="" className="z-fav-thumb" />
 					<span className="text-truncate">{fav.name}</span>
 				</div>
 				<button
@@ -36,7 +36,7 @@ export const Navbar = () => {
 					onClick={() => removeFavorite(fav.id, fav.type)}
 					aria-label={`Quitar ${fav.name} de favoritos`}
 				>
-					<i className="fa-solid fa-xmark"></i>
+					<i className="fa-solid fa-xmark" aria-hidden="true"></i>
 				</button>
 			</div>
 		</li>
@@ -67,7 +67,7 @@ export const Navbar = () => {
 						data-bs-auto-close="false"
 						aria-expanded="false"
 					>
-						<i className="fa-solid fa-heart"></i>
+						<i className="fa-solid fa-heart" aria-hidden="true"></i>
 						Favoritos
 						<span className="z-tag z-tag--red ms-1">{store.favorites.length}</span>
 					</button>

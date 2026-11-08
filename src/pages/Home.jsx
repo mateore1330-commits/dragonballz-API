@@ -3,6 +3,7 @@ import { PlanetCard } from "../components/PlanetCard.jsx";
 import { Carousel } from "../components/Carousel.jsx";
 import { StatusMessage } from "../components/StatusMessage.jsx";
 import useGlobalReducer from "../hooks/useGlobalReducer.jsx";
+import { usePageTitle } from "../hooks/usePageTitle.js";
 
 /* ==========================================================================
    PAGINA DE INICIO
@@ -26,7 +27,7 @@ const ListPlaceholder = ({ title, kanji, failed, onRetry }) => (
 		<div className="z-section-head">
 			<div className="d-flex align-items-end gap-3 flex-wrap">
 				<h2 className="z-title">{title}</h2>
-				<span className="z-kanji d-none d-md-inline">{kanji}</span>
+				<span className="z-kanji d-none d-md-inline" aria-hidden="true">{kanji}</span>
 			</div>
 		</div>
 
@@ -52,6 +53,7 @@ const ListPlaceholder = ({ title, kanji, failed, onRetry }) => (
 
 export const Home = () => {
 	const { store, dispatch } = useGlobalReducer();
+	usePageTitle(null); // La home lleva solo el nombre del sitio
 
 	// "Reintentar" quita la marca de fallo y Layout.jsx vuelve a pedir la lista
 	const retry = (list) => dispatch({ type: "retry_load", payload: list });
