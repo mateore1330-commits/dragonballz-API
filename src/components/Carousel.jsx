@@ -101,15 +101,26 @@ export const Carousel = ({ title, kanji, items, renderItem }) => {
 					className="z-carousel-track"
 					style={{ transform: `translateX(-${index * slideWidth}%)` }}
 				>
-					{items.map((item) => (
-						<div
-							key={`${item.id}-${item.name}`}
-							className="z-carousel-slide"
-							style={{ width: `${slideWidth}%` }}
-						>
-							{renderItem(item)}
-						</div>
-					))}
+					{items.map((item, position) => {
+						/*
+						  Las tarjetas que quedan fuera de la ventana siguen en la
+						  pagina (solo estan desplazadas). "inert" las saca del orden
+						  del tabulador y del lector de pantalla; sin el, el foco del
+						  teclado acabaria en un "Leer mas" que no se ve.
+						  En React 18 "inert" se pasa como texto: "" = activado.
+						*/
+						const isVisible = position >= index && position < index + visibleCount;
+						return (
+							<div
+								key={`${item.id}-${item.name}`}
+								className="z-carousel-slide"
+								style={{ width: `${slideWidth}%` }}
+								inert={isVisible ? undefined : ""}
+							>
+								{renderItem(item)}
+							</div>
+						);
+					})}
 				</div>
 			</div>
 		</section>
