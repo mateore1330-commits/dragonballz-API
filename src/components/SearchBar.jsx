@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useId } from "react";
 import { Link, useNavigate } from "react-router";
 import useGlobalReducer from "../hooks/useGlobalReducer.jsx";
 
@@ -24,6 +24,7 @@ export const SearchBar = () => {
 	const [highlightedIndex, setHighlightedIndex] = useState(-1); // Sugerencia resaltada (-1 = ninguna)
 	const containerRef = useRef(null);                       // Referencia al contenedor, para detectar clics fuera
 	const navigate = useNavigate();                          // Navegacion desde el teclado (Enter)
+	const listId = useId();                                  // Id de la lista, para enlazarla con el input
 
 	// Cerrar las sugerencias al hacer clic (o tocar) en cualquier punto fuera del buscador.
 	// Se usa "pointerdown" y no "mousedown": en iOS Safari, mousedown no se dispara
@@ -92,10 +93,29 @@ export const SearchBar = () => {
 		}
 	};
 
+	// Id de cada sugerencia: el input dice cual esta resaltada con aria-activedescendant
+	const optionId = (index) => `${listId}-${index}`;
+	const isOpen = matches.length > 0;
+
+	/*
+	  Accesibilidad (patron "combobox" de ARIA):
+	    - El input se presenta como un combobox que controla una lista
+	      (aria-controls) y dice si esta abierta (aria-expanded).
+	    - Al moverse con las flechas, el foco se queda en el input y
+	      aria-activedescendant le dice al lector de pantalla que sugerencia
+	      esta resaltada.
+	    - Una region "aria-live" anuncia cuantas sugerencias hay al escribir.
+	*/
 	return (
 		<div className="z-search position-relative flex-grow-1" ref={containerRef}>
 			<input
 				type="search"
+				role="combobox"
+				aria-label="Buscar personajes o planetas"
+				aria-autocomplete="list"
+				aria-expanded={isOpen}
+				aria-controls={listId}
+				aria-activedescendant={isOpen && highlightedIndex >= 0 ? optionId(highlightedIndex) : undefined}
 				className="z-search-input w-100"
 				// Evita que el teclado movil corrija o ponga mayusculas a los nombres
 				autoComplete="off"
@@ -109,13 +129,33 @@ export const SearchBar = () => {
 				onKeyDown={handleKeyDown}
 			/>
 
+			{/* Solo para lectores de pantalla: cuantas sugerencias hay */}
+			<div className="visually-hidden" aria-live="polite">
+				{term.length === 0 ? "" : matches.length === 0 ? "Sin resultados" : `${matches.length} sugerencias`}
+			</div>
+
 			{/* Las sugerencias solo aparecen si hay alguna coincidencia */}
-			{matches.length > 0 && (
-				<ul className="z-suggestions position-absolute w-100" style={{ zIndex: 1050, top: "100%" }}>
+			{isOpen && (
+				<ul
+					id={listId}
+					role="listbox"
+					aria-label="Sugerencias"
+					className="z-suggestions position-absolute w-100"
+					style={{ zIndex: 1050, top: "100%" }}
+				>
 					{matches.map((item, index) => (
-						<li key={`${item.type}-${item.id}`} className="z-suggestion">
+						<li
+							key={`${item.type}-${item.id}`}
+							id={optionId(index)}
+							role="option"
+							aria-selected={index === highlightedIndex}
+							className="z-suggestion"
+						>
 							<Link
 								to={buildPath(item)}
+								// Fuera del orden del tabulador: con el teclado se eligen con
+								// las flechas y Enter desde el propio input
+								tabIndex={-1}
 								className={`z-suggestion-link ${index === highlightedIndex ? "is-active" : ""}`}
 								onClick={resetSearch}
 								// Mantiene sincronizados raton y teclado: al pasar el raton
@@ -125,7 +165,7 @@ export const SearchBar = () => {
 								<img src={item.image} alt="" className="z-suggestion-thumb" />
 								<span className="text-truncate">{item.name}</span>
 								<span className="ms-auto text-uppercase" style={{ fontSize: "0.65rem", opacity: 0.7 }}>
-									{item.type}
+									{item.type === "character" ? "Personaje" : "Planeta"}
 								</span>
 							</Link>
 						</li>
