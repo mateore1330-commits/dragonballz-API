@@ -16,16 +16,16 @@ import { StoreProvider } from './hooks/StoreProvider.jsx';
 
    El StoreProvider va por fuera para que cualquier pagina, incluida la de
    error, pueda leer el store.
-   ========================================================================== */
-const Main = () => {
-    return (
-        // StrictMode solo actua en desarrollo: avisa de malas practicas en la consola
-        <React.StrictMode>
-            <StoreProvider>
-                <RouterProvider router={router} />
-            </StoreProvider>
-        </React.StrictMode>
-    );
-}
 
-ReactDOM.createRoot(document.getElementById('root')).render(<Main />)
+   Se pinta directamente, sin un componente "Main" intermedio: este archivo
+   no exporta nada, y la recarga en caliente de Vite solo funciona con
+   componentes que se exportan.
+   ========================================================================== */
+ReactDOM.createRoot(document.getElementById('root')).render(
+    // StrictMode solo actua en desarrollo: avisa de malas practicas en la consola
+    <React.StrictMode>
+        <StoreProvider>
+            <RouterProvider router={router} />
+        </StoreProvider>
+    </React.StrictMode>
+)
