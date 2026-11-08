@@ -1,16 +1,17 @@
-import { useState, useEffect } from "react";
 import { Link, useParams } from "react-router";
 import { CharacterCard } from "../components/CharacterCard.jsx";
 import { getPlanet } from "../services/services.js";
 import useGlobalReducer from "../hooks/useGlobalReducer.jsx";
+import { useApiResource } from "../hooks/useApiResource.js";
+import { ResourceStatus } from "../components/ResourceStatus.jsx";
 
 /* ==========================================================================
    PAGINA DE DETALLE DE UN PLANETA
    --------------------------------------------------------------------------
    Ruta asociada: /planets/:id  (definida en routes.jsx)
 
-   Sigue el mismo patron que CharacterDetails: coge el id de la URL, pide el
-   planeta a la API y lo guarda en un estado local.
+   Sigue el mismo patron que CharacterDetails: coge el id de la URL y pide
+   el planeta a la API con useApiResource.
 
    Detalle util de esta API: el endpoint de un planeta ya devuelve dentro un
    array "characters" con sus habitantes, asi que no hace falta una segunda
@@ -19,21 +20,16 @@ import useGlobalReducer from "../hooks/useGlobalReducer.jsx";
    ========================================================================== */
 export const PlanetDetails = () => {
 	const { id } = useParams();
-	const [planet, setPlanet] = useState(null);
 	const { store, dispatch } = useGlobalReducer();
+	const { status, data: planet, retry } = useApiResource(getPlanet, id);
 
-	useEffect(() => {
-		getPlanet(id).then((data) => setPlanet(data));
-	}, [id]);
-
-	// Salida temprana mientras llega la respuesta de la API
-	if (!planet) {
-		return (
-			<main className="container my-5 text-center">
-				<p className="z-counter">Loading...</p>
-			</main>
-		);
+	// Mientras no hay planeta (cargando, no existe o error) se avisa y se sale
+	if (status !== "ready") {
+		return <ResourceStatus status={status} retry={retry} notFoundTitle="Planeta no encontrado" />;
 	}
+
+	// Habitantes del planeta; si el campo faltara, lista vacia
+	const inhabitants = planet.characters ?? [];
 
 	const isFavorite = store.favorites.some((fav) => fav.id === planet.id && fav.type === "planet");
 
@@ -91,7 +87,7 @@ export const PlanetDetails = () => {
 						</li>
 						<li>
 							<span className="z-label">Personajes del planeta</span>
-							<span className="z-value">{planet.characters.length}</span>
+							<span className="z-value">{inhabitants.length}</span>
 						</li>
 					</ul>
 
@@ -109,11 +105,11 @@ export const PlanetDetails = () => {
 					<span className="z-counter">DE {planet.name.toUpperCase()}</span>
 				</div>
 
-				{planet.characters.length === 0 ? (
+				{inhabitants.length === 0 ? (
 					<p className="z-counter">No hay personajes conocidos de este planeta.</p>
 				) : (
 					<div className="row g-4">
-						{planet.characters.map((char) => (
+						{inhabitants.map((char) => (
 							// col-* reparte las tarjetas en una rejilla de 3 por fila
 							<div key={char.id} className="col-12 col-md-6 col-lg-4">
 								<CharacterCard

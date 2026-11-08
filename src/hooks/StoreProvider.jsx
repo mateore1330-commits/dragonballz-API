@@ -1,5 +1,5 @@
 import { useReducer, useEffect } from "react";
-import storeReducer, { initialStore } from "../store";
+import storeReducer, { initialStore, saveStore } from "../store";
 import { StoreContext } from "./storeContext.js";
 
 /* ==========================================================================
@@ -20,15 +20,15 @@ export function StoreProvider({ children }) {
       Persistencia automatica en el navegador.
 
       Este efecto se ejecuta cada vez que el store cambia y vuelca una copia
-      completa en localStorage. Al estar centralizado aqui, no hace falta
-      acordarse de guardar nada en cada dispatch suelto: favoritos, personajes
-      y planetas se guardan solos.
+      en localStorage (saveStore, en store.js, decide que se guarda). Al
+      estar centralizado aqui, no hace falta acordarse de guardar nada en
+      cada dispatch suelto: favoritos, personajes y planetas se guardan solos.
 
       Es la pieza que permite que, al recargar la pagina, initialStore()
       recupere los datos y la web no tenga que llamar de nuevo a la API.
     */
     useEffect(() => {
-        localStorage.setItem("store", JSON.stringify(store))
+        saveStore(store)
     }, [store])
 
     return <StoreContext.Provider value={{ store, dispatch }}>

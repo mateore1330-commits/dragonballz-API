@@ -660,6 +660,29 @@ a:hover {
 }
 
 
+/* Mensaje de estado: cargando, no encontrado o error (StatusMessage.jsx) */
+.z-status {
+	max-width: 560px;
+	margin: 3rem auto;
+}
+
+.z-status-kanji {
+	font-family: var(--z-font-body);
+	font-weight: 900;
+	font-size: clamp(3rem, 10vw, 5rem);
+	line-height: 1;
+	color: var(--z-ink);
+	opacity: 0.15;
+	margin-bottom: 0.5rem;
+}
+
+.z-status-text {
+	color: var(--z-ink-soft);
+	line-height: 1.7;
+	margin: 1rem 0 1.5rem;
+}
+
+
 /* ==========================================================================
    8. BOTONES
    ========================================================================== */

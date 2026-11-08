@@ -38,18 +38,29 @@ export const Layout = () => {
       sus datos ya estan frescos, asi que no repite la peticion. Con un solo
       efecto, al llegar los personajes se volverian a pedir los planetas
       aunque su peticion siguiera en marcha.
+
+      Si una descarga falla, se marca en store.loadFailed y el efecto deja de
+      intentarlo (si no, reintentaria sin parar). El boton "Reintentar" de la
+      home quita esa marca, el efecto vuelve a ejecutarse y pide la lista.
     */
-    useEffect(() => {
-        if (isStale(store.characterFetchedAt)) {
-            getAllCharacter().then((data) => dispatch({ type: "set_characters", payload: data.items }))
-        }
-    }, [store.characterFetchedAt, dispatch])
+    const charactersFailed = store.loadFailed.characters
+    const planetsFailed = store.loadFailed.planets
 
     useEffect(() => {
-        if (isStale(store.planetsFetchedAt)) {
-            getAllPlanets().then((data) => dispatch({ type: "set_planets", payload: data.items }))
+        if (isStale(store.characterFetchedAt) && !charactersFailed) {
+            getAllCharacter()
+                .then((data) => dispatch({ type: "set_characters", payload: data.items }))
+                .catch(() => dispatch({ type: "load_failed", payload: "characters" }))
         }
-    }, [store.planetsFetchedAt, dispatch])
+    }, [store.characterFetchedAt, charactersFailed, dispatch])
+
+    useEffect(() => {
+        if (isStale(store.planetsFetchedAt) && !planetsFailed) {
+            getAllPlanets()
+                .then((data) => dispatch({ type: "set_planets", payload: data.items }))
+                .catch(() => dispatch({ type: "load_failed", payload: "planets" }))
+        }
+    }, [store.planetsFetchedAt, planetsFailed, dispatch])
 
     return (
         <>
