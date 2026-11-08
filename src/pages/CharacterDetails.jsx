@@ -3,6 +3,8 @@ import { getCharacter } from "../services/services.js";
 import useGlobalReducer from "../hooks/useGlobalReducer.jsx";
 import { useApiResource } from "../hooks/useApiResource.js";
 import { ResourceStatus } from "../components/ResourceStatus.jsx";
+import { usePageTitle } from "../hooks/usePageTitle.js";
+import { resourceTitle } from "../hooks/resourceTitle.js";
 
 /* ==========================================================================
    PAGINA DE DETALLE DE UN PERSONAJE
@@ -28,6 +30,7 @@ export const CharacterDetails = () => {
 	  y dice en que punto esta la peticion (ver hooks/useApiResource.js).
 	*/
 	const { status, data: character, retry } = useApiResource(getCharacter, id);
+	usePageTitle(resourceTitle(status, character?.name, "Personaje no encontrado"));
 
 	// Mientras no hay personaje (cargando, no existe o error) se avisa y se
 	// sale: el resto de la pagina da por hecho que "character" tiene datos

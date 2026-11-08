@@ -4,6 +4,8 @@ import { getPlanet } from "../services/services.js";
 import useGlobalReducer from "../hooks/useGlobalReducer.jsx";
 import { useApiResource } from "../hooks/useApiResource.js";
 import { ResourceStatus } from "../components/ResourceStatus.jsx";
+import { usePageTitle } from "../hooks/usePageTitle.js";
+import { resourceTitle } from "../hooks/resourceTitle.js";
 
 /* ==========================================================================
    PAGINA DE DETALLE DE UN PLANETA
@@ -22,6 +24,7 @@ export const PlanetDetails = () => {
 	const { id } = useParams();
 	const { store, dispatch } = useGlobalReducer();
 	const { status, data: planet, retry } = useApiResource(getPlanet, id);
+	usePageTitle(resourceTitle(status, planet?.name, "Planeta no encontrado"));
 
 	// Mientras no hay planeta (cargando, no existe o error) se avisa y se sale
 	if (status !== "ready") {

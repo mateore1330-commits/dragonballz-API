@@ -1,6 +1,7 @@
 import { Link, isRouteErrorResponse, useRouteError } from "react-router";
 import { StatusMessage } from "../components/StatusMessage.jsx";
 import { NotFound } from "./NotFound.jsx";
+import { usePageTitle } from "../hooks/usePageTitle.js";
 
 /* ==========================================================================
    PAGINA DE ERROR
@@ -19,7 +20,13 @@ export const ErrorPage = ({ standalone = false }) => {
 	const error = useRouteError();
 
 	// Una ruta que no existe tambien llega aqui como error 404
-	if (isRouteErrorResponse(error) && error.status === 404) return <NotFound />;
+	const isNotFound = isRouteErrorResponse(error) && error.status === 404;
+
+	// El titulo se decide aqui y no en NotFound: el efecto del padre se ejecuta
+	// despues que el del hijo y pisaria el suyo
+	usePageTitle(isNotFound ? "Página no encontrada" : "Algo ha fallado");
+
+	if (isNotFound) return <NotFound />;
 
 	// El detalle tecnico solo se muestra en la consola, para quien desarrolla
 	console.error(error);
