@@ -11,6 +11,8 @@
      - characters : los usan la home y el buscador del navbar
      - planets    : igual que los personajes
      - *FetchedAt : marcas de tiempo para saber si los datos ya caducaron
+     - loadFailed : si la ultima descarga de cada lista fallo (no se guarda
+                    en localStorage: solo vale mientras la pagina esta abierta)
 
    El estado NUNCA se modifica directamente: cada caso del reducer devuelve
    un objeto nuevo con el operador spread (...store). Asi React detecta el
@@ -100,7 +102,11 @@ const readSavedStore = () => {
  * favoritos y las listas ya descargadas sobreviven a un F5 y la web no
  * vuelve a llamar a la API en cada recarga.
  */
-export const initialStore = () => readSavedStore() ?? emptyStore();
+export const initialStore = () => ({
+  ...(readSavedStore() ?? emptyStore()),
+  // Ninguna descarga ha fallado todavia en esta visita
+  loadFailed: { characters: false, planets: false },
+});
 
 /**
  * Guarda en localStorage la parte del store que debe sobrevivir a un F5.
@@ -158,6 +164,7 @@ export default function storeReducer(store, action = {}) {
         ...store,
         characters: action.payload,
         characterFetchedAt: Date.now(),
+        loadFailed: { ...store.loadFailed, characters: false },
       };
 
     // --- Guardar el listado de planetas descargado de la API ---
@@ -166,6 +173,25 @@ export default function storeReducer(store, action = {}) {
         ...store,
         planets: action.payload,
         planetsFetchedAt: Date.now(),
+        loadFailed: { ...store.loadFailed, planets: false },
+      };
+
+    // --- La descarga de una lista ha fallado ---
+    // payload: "characters" o "planets". Layout.jsx deja de intentarlo y la
+    // home muestra el error con un boton para reintentar.
+    case 'load_failed':
+      return {
+        ...store,
+        loadFailed: { ...store.loadFailed, [action.payload]: true },
+      };
+
+    // --- Reintentar la descarga de una lista ---
+    // payload: "characters" o "planets". Al quitar la marca de fallo,
+    // el efecto de Layout.jsx vuelve a pedirla.
+    case 'retry_load':
+      return {
+        ...store,
+        loadFailed: { ...store.loadFailed, [action.payload]: false },
       };
 
     // Si llega una accion que no existe es un error de programacion:
