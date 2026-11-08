@@ -1,6 +1,5 @@
 import { useEffect } from "react"
-import { Outlet } from "react-router"
-import ScrollToTop from "../components/ScrollToTop"
+import { Outlet, ScrollRestoration } from "react-router"
 import { Navbar } from "../components/Navbar"
 import { Footer } from "../components/Footer"
 import useGlobalReducer from "../hooks/useGlobalReducer.jsx"
@@ -53,11 +52,19 @@ export const Layout = () => {
     }, [store.planetsFetchedAt, dispatch])
 
     return (
-        <ScrollToTop>
+        <>
             <Navbar />
             {/* Outlet: aqui React Router inserta la pagina de la ruta actual */}
             <Outlet />
             <Footer />
-        </ScrollToTop>
+            {/*
+              Control del scroll al navegar:
+                - a una pagina nueva -> empieza arriba del todo
+                - con "atras" o "adelante" del navegador -> vuelve a la
+                  posicion en la que se dejo esa pagina
+              Solo funciona con createBrowserRouter (el que usa routes.jsx).
+            */}
+            <ScrollRestoration />
+        </>
     )
 }
