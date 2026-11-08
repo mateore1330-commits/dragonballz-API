@@ -25,16 +25,18 @@ export const SearchBar = () => {
 	const containerRef = useRef(null);                       // Referencia al contenedor, para detectar clics fuera
 	const navigate = useNavigate();                          // Navegacion desde el teclado (Enter)
 
-	// Cerrar las sugerencias al hacer clic en cualquier punto fuera del buscador
+	// Cerrar las sugerencias al hacer clic (o tocar) en cualquier punto fuera del buscador.
+	// Se usa "pointerdown" y no "mousedown": en iOS Safari, mousedown no se dispara
+	// al tocar zonas no clicables, y las sugerencias se quedaban abiertas en movil.
 	useEffect(() => {
 		const handleClickOutside = (event) => {
 			if (containerRef.current && !containerRef.current.contains(event.target)) {
 				setTerm("");
 			}
 		};
-		document.addEventListener("mousedown", handleClickOutside);
+		document.addEventListener("pointerdown", handleClickOutside);
 		// Limpieza: si no se quita el listener, se acumularia en cada montaje
-		return () => document.removeEventListener("mousedown", handleClickOutside);
+		return () => document.removeEventListener("pointerdown", handleClickOutside);
 	}, []);
 
 	/*
@@ -91,10 +93,16 @@ export const SearchBar = () => {
 	};
 
 	return (
-		<div className="position-relative flex-grow-1" ref={containerRef} style={{ maxWidth: "320px" }}>
+		<div className="z-search position-relative flex-grow-1" ref={containerRef}>
 			<input
-				type="text"
+				type="search"
 				className="z-search-input w-100"
+				// Evita que el teclado movil corrija o ponga mayusculas a los nombres
+				autoComplete="off"
+				autoCorrect="off"
+				autoCapitalize="off"
+				spellCheck={false}
+				enterKeyHint="search"
 				placeholder="Buscar personajes o planetas..."
 				value={term}
 				onChange={handleChange}
