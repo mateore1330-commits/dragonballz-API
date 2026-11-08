@@ -62,11 +62,27 @@ export const Layout = () => {
         }
     }, [store.planetsFetchedAt, planetsFailed, dispatch])
 
+    /*
+      "Saltar al contenido": quien navega con el teclado se ahorra pasar por
+      todo el navbar en cada pagina. Se mueve el foco a mano en lugar de usar
+      el "#contenido" de la URL, para que React Router no lo tome como una
+      navegacion.
+    */
+    const skipToContent = (event) => {
+        event.preventDefault()
+        document.getElementById("contenido")?.focus()
+    }
+
     return (
         <>
+            <a href="#contenido" className="z-skip-link visually-hidden-focusable" onClick={skipToContent}>
+                Saltar al contenido
+            </a>
             <Navbar />
             {/* Outlet: aqui React Router inserta la pagina de la ruta actual */}
-            <Outlet />
+            <div id="contenido" tabIndex={-1}>
+                <Outlet />
+            </div>
             <Footer />
             {/*
               Control del scroll al navegar:
