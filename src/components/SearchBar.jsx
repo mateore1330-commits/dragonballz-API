@@ -93,10 +93,16 @@ export const SearchBar = () => {
 	};
 
 	return (
-		<div className="position-relative flex-grow-1" ref={containerRef} style={{ maxWidth: "320px" }}>
+		<div className="z-search position-relative flex-grow-1" ref={containerRef}>
 			<input
-				type="text"
+				type="search"
 				className="z-search-input w-100"
+				// Evita que el teclado movil corrija o ponga mayusculas a los nombres
+				autoComplete="off"
+				autoCorrect="off"
+				autoCapitalize="off"
+				spellCheck={false}
+				enterKeyHint="search"
 				placeholder="Buscar personajes o planetas..."
 				value={term}
 				onChange={handleChange}
