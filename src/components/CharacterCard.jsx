@@ -68,7 +68,7 @@ export const CharacterCard = ({ id, image, name, race, gender, ki }) => {
 					<button
 						className={`z-btn z-btn-fav ${isFavorite ? "is-fav" : ""}`}
 						onClick={toggleFavorite}
-						aria-label={isFavorite ? `Quitar ${name} de favoritos` : `Anadir ${name} a favoritos`}
+						aria-label={isFavorite ? `Quitar ${name} de favoritos` : `Añadir ${name} a favoritos`}
 					>
 						{/* Corazon relleno si es favorito, contorno si no */}
 						<i className={`${isFavorite ? "fa-solid" : "fa-regular"} fa-heart`}></i>

@@ -78,7 +78,7 @@ export const CharacterDetails = () => {
 						<button
 							className={`z-btn z-btn-fav ${isFavorite ? "is-fav" : ""}`}
 							onClick={toggleFavorite}
-							aria-label={isFavorite ? "Quitar de favoritos" : "Anadir a favoritos"}
+							aria-label={isFavorite ? `Quitar ${character.name} de favoritos` : `Añadir ${character.name} a favoritos`}
 						>
 							<i className={`${isFavorite ? "fa-solid" : "fa-regular"} fa-heart`}></i>
 						</button>

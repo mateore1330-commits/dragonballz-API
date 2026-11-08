@@ -10,14 +10,16 @@ export const Footer = () => (
 		<p className="z-footer-kanji mb-2">戦士絆運命希望</p>
 
 		<p className="mb-1">
-			Data provided by{" "}
+			Datos de la{" "}
 			<a href="https://dragonball-api.com" target="_blank" rel="noreferrer">
 				Dragon Ball API
+				{/* Solo para lectores de pantalla: avisa de que no se queda en la web */}
+				<span className="visually-hidden"> (se abre en una pestaña nueva)</span>
 			</a>
 		</p>
 
 		<p className="mb-0" style={{ opacity: 0.7 }}>
-			React practice project — Mateo Design
+			Proyecto de práctica con React — Mateo Design
 		</p>
 	</footer>
 );

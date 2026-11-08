@@ -57,7 +57,7 @@ export const PlanetCard = ({ id, image, name, isDestroyed, description }) => {
 					<button
 						className={`z-btn z-btn-fav ${isFavorite ? "is-fav" : ""}`}
 						onClick={toggleFavorite}
-						aria-label={isFavorite ? `Quitar ${name} de favoritos` : `Anadir ${name} a favoritos`}
+						aria-label={isFavorite ? `Quitar ${name} de favoritos` : `Añadir ${name} a favoritos`}
 					>
 						<i className={`${isFavorite ? "fa-solid" : "fa-regular"} fa-heart`}></i>
 					</button>
