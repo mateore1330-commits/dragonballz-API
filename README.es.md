@@ -1,73 +1,81 @@
-# Plantilla WebApp con React JS
+[English](README.md) | **Español**
 
-> 🎥 Esta plantilla [cuenta con un video tutorial](https://youtu.be/9blWKQTJ1FA), para verlo haz clic aquí.
+# Blog de Dragon Ball Z
 
-Utilizada por [4Geeks.com](https://4geeks.com/) y los estudiantes de [4Geeks Academy](https://4geeksacademy.com/), esta plantilla ayuda a iniciar tus primeras aplicaciones web multi-página integrándose con la última versión de React, React-Router, despliegues en Vercel y [Vite](https://4geeks.com/es/lesson/introduccion-a-vite-como-empaquetador-de-modulos) para el empaquetado.
+Un blog sobre los personajes y planetas de Dragon Ball Z, con la estética de un cartel de periódico japonés antiguo. Está hecho con React y Vite, con los datos de la [Dragon Ball API](https://dragonball-api.com), que es pública.
 
-### Empezando:
+**Web publicada: [dragonballz-api.vercel.app](https://dragonballz-api.vercel.app)**
 
-> 📦 Asegúrate de usar al menos la versión 20 de Node.
+![La home en escritorio](docs/capturas/home-escritorio.png)
 
-1. Instala las dependencias del paquete node escribiendo: `$ npm install`
+## Qué tiene
 
-2. Crea un archivo .env basado en el .env.example escribiendo `$ cp .env.example .env`
+- **Personajes y planetas** en dos carruseles, con una ficha para cada uno: datos, descripción, planeta de origen, transformaciones y habitantes.
+- **Buscador con sugerencias** en el navbar. Funciona con el ratón y con el teclado (flechas, Enter y Escape).
+- **Favoritos** guardados en el navegador, que se mantienen al recargar. Sin cuentas ni base de datos.
+- **Preparado para los fallos:** una página 404, una página de "no encontrado" para los ids que no existen y un botón de reintentar si fallan la API o la conexión. Si los datos de `localStorage` están corruptos, la app no se rompe.
+- **Accesible:**
+  - se puede usar con el teclado y con lector de pantalla;
+  - foco visible, enlace para saltar al contenido y buscador con el patrón *combobox* de ARIA;
+  - el carrusel saca del tabulador las tarjetas que no se ven.
+- **Adaptado al móvil:** en el móvil, el buscador va en su propia fila y los carruseles muestran una tarjeta cada vez.
 
-3. ¡Comienza a programar! y el servidor de desarrollo de vite con recarga en vivo escribiendo: `$ npm run start`
+| Ficha de personaje | Buscador en el móvil |
+| --- | --- |
+| ![La ficha de Goku](docs/capturas/ficha-escritorio.png) | ![Sugerencias del buscador en el móvil](docs/capturas/buscador-movil.png) |
 
-### Estilos
+## Tecnologías
 
-Puedes actualizar el archivo `./index.css` o crear nuevos archivos `.css` e importarlos en tus archivos css o js actuales según tus necesidades.
+| | |
+| --- | --- |
+| Interfaz | React 18.3 · React Router 7 |
+| Build | Vite 8 |
+| Estilos | Bootstrap 5.3 (rejilla y desplegable) y CSS propio · Font Awesome · Google Fonts |
+| Calidad | ESLint 9 · GitHub Actions |
+| Publicación | Vercel |
 
-### Componentes
+## Arrancarlo en local
 
-Agrega más archivos en tu carpeta `./src/components` según los necesites e impórtalos en tus paginas actuales según sea necesario.
+Necesitas **Node 20.19 o superior**. Lo más fácil es abrir el repo en VS Code con la extensión **Dev Containers**: el contenedor ya trae Node, GitHub CLI y las extensiones del proyecto.
 
-### Páginas
-
-Agrega más archivos en tu carpeta `./js/pages` e impórtalos en `./routes.jsx`.
-Cada página debe coincidir con al menos una ruta dentro de `routes.jsx`
-
-### Almacenamiento Centralizado con useReducer
-
-Esta plantilla viene con un estado general y centralizado que se comparte con todas las páginas y componentes, lo llamamos "store".
-
-El archivo `./src/store.js` tiene una estructura predeterminada para el store, te animamos a cambiarla y adaptarla a tus necesidades de datos (por ejemplo, si estás haciendo una `Lista de tareas` probablemente tendrás un arreglo de tareas aquí).
-
-💡Nota: Hay un ejemplo usando el store y dispatcher de useReducer en el archivo `pages/demo.js`;
-
-+ Entiende [como funciona el `useReducer`](https://4geeks.com/es/lesson/que-es-usereducer-react)
-+ Lee más sobre [implementar un estado global con API de Contexto](https://4geeks.com/es/lesson/context-api-es)
-+ Lee más sobre [hooks de react](https://4geeks.com/es/lesson/react-hooks-explained-es)
-
-El `Proveedor` del store para este contexto ya está configurado en `./src/main.jsx`. Puedes acceder al store desde cualquier componente usando el hook `useGlobalReducer` para obtener el `store` y el `despachador`. Consulta `/views/demo.js` para ver una demostración. Aquí tienes un ejemplo más pequeño:
-
-```jsx
-import useGlobalReducer from "./src/hooks/useGlobalReducer";
-
-const MyComponentSuper = () => {
-  //aquí usas el hook para obtener el despachador y el almacén
-  import { dispatch, store } = useGlobalReducer();
-
-  return <div>{/* puedes usar tus acciones o el almacén dentro del html */}</div>
-}
+```bash
+npm ci          # instala las versiones exactas de package-lock.json
+npm run start   # servidor de desarrollo en http://localhost:3000
 ```
 
-## ¡Publica tu sitio web!
+| Comando | Qué hace |
+| --- | --- |
+| `npm run start` | Servidor de desarrollo con recarga en caliente |
+| `npm run build` | Versión de producción en `dist/` |
+| `npm run preview` | Sirve en local la versión de producción |
+| `npm run lint` | ESLint, sin permitir ningún aviso |
 
-1. **Vercel:** El proveedor de alojamiento GRATUITO recomendado es [vercel.com](https://vercel.com/), puedes desplegar en 1 minuto escribiendo los siguientes 2 comandos:
+No hace falta ninguna variable de entorno: la API es pública.
 
-Iniciar sesión (necesitas tener una cuenta):
-```sh
-$ npm i vercel -g && vercel login
+## Estructura
+
 ```
-Desplegar:
-```sh
-$ vercel --prod
+src/
+  pages/        Un componente por ruta: home, fichas de personaje y planeta, 404 y error
+  components/   Navbar, buscador, carrusel, tarjetas, footer y mensajes de estado
+  hooks/        Store global (Context + useReducer), peticiones a la API y título de la pestaña
+  services/     Todas las llamadas a la Dragon Ball API
+  store.js      El estado global: favoritos, listas y lo que se guarda en localStorage
+  routes.jsx    Las rutas
 ```
-✎ Nota: Si no tienes una cuenta, simplemente ve a vercel.com, crea una cuenta y regresa aquí.
 
-![Procedimiento de ejemplo de Vercel para desplegar](https://github.com/4GeeksAcademy/react-hello-webapp/blob/4b530ba091a981d3916cc6e960e370decaf2e234/docs/deploy.png?raw=true)
+## Cómo se trabaja
 
-## Contribuidores
+- **`main`** es producción y **`develop`** es donde se juntan y se prueban los cambios. Cada tarea es una issue de GitHub con su propia rama y su PR a `develop`.
+- **Cada PR** pasa el lint y el build en GitHub Actions, y tiene su preview en Vercel.
+- **Al hacer merge a `main`**, se publica en producción.
 
-Esta plantilla fue construida como parte del [Coding Bootcamp](https://4geeksacademy.com/us/coding-bootcamp) de 4Geeks Academy por [Alejandro Sanchez](https://twitter.com/alesanchezr) y muchos otros contribuidores. Descubre más sobre nuestro [Curso de Desarrollador Full Stack](https://4geeksacademy.com/us/coding-bootcamps/part-time-full-stack-developer), [Curso de data-science](https://4geeksacademy.com/es/coding-bootcamps/curso-datascience-machine-learning) y [Curso de Ciberseguridad](https://4geeksacademy.com/es/coding-bootcamps/curso-ciberseguridad).
+## Créditos
+
+- Datos de la [Dragon Ball API](https://dragonball-api.com).
+- El proyecto partió de la [plantilla de React de 4Geeks Academy](https://github.com/4GeeksAcademy/react-hello-webapp).
+- Dragon Ball y sus personajes pertenecen a sus respectivos propietarios. Este es un proyecto de práctica sin fines comerciales.
+
+## Licencia
+
+[MIT](LICENSE)

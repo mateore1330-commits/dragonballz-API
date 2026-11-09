@@ -1,73 +1,81 @@
-# WebApp Template with React JS
+**English** | [Español](README.es.md)
 
+# Dragon Ball Z Blog
 
-Used by 4Geeks.com and 4Geeks Academy students, this template helps to bootstrap your first multi-page web applications by integrating with React latest version, vercel deployments and [Vite](https://4geeks.com/lesson/intro-to-vite-module-bundler) for bundling.
+A blog about the characters and planets of Dragon Ball Z, styled like an old Japanese newspaper poster. Built with React and Vite, using data from the public [Dragon Ball API](https://dragonball-api.com).
 
-### Getting stated:
+**Live site: [dragonballz-api.vercel.app](https://dragonballz-api.vercel.app)**
 
-> 📦 Make sure you are using at least node version 20.
+![Home page on desktop](docs/capturas/home-escritorio.png)
 
-1. Install the node package dependencies by typing: `$ npm install`
+## Features
 
-2. Create a .env file by typing `$ cp .env.example .env`
+- **Characters and planets** in two carousels, with a detail page for each one: stats, description, home planet, transformations and inhabitants.
+- **Search with suggestions** in the navbar. Works with the mouse and with the keyboard (arrow keys, Enter, Escape).
+- **Favorites** saved in the browser, so they survive a reload. No account or database needed.
+- **Built for failure:** a 404 page, "not found" pages for ids that don't exist, and a retry button when the API or the connection fails. Corrupt data in `localStorage` doesn't break the app.
+- **Accessible:**
+  - works with the keyboard and with screen readers;
+  - visible focus, a skip link and an ARIA combobox for the search;
+  - the carousel keeps hidden cards out of the tab order.
+- **Responsive:** on phones the search gets its own row and the carousels show one card at a time.
 
-3. Start coding! and the vite dev server with live reload by typing: `$ npm run start`
+| Character page | Search on mobile |
+| --- | --- |
+| ![Goku's character page](docs/capturas/ficha-escritorio.png) | ![Search suggestions on mobile](docs/capturas/buscador-movil.png) |
 
+## Tech stack
 
-### Styling
+| | |
+| --- | --- |
+| UI | React 18.3 · React Router 7 |
+| Build | Vite 8 |
+| Styles | Bootstrap 5.3 (grid and dropdown) and our own CSS · Font Awesome · Google Fonts |
+| Quality | ESLint 9 · GitHub Actions |
+| Hosting | Vercel |
 
-You can update the `./index.css` or create new `.css` files and import them into your current css or js files depending on your needs.
+## Running it locally
 
-### Components
+You need **Node 20.19 or newer**. The easiest way is to open the repo in VS Code with the **Dev Containers** extension: the container already has Node, the GitHub CLI and the project extensions.
 
-Add more files into your `./src/components` or styles folder as you need them and import them into your current files as needed.
-
-💡Note: There is an example using the Context API inside `pages/demo.js`;
-
-### Pages
-
-Add more files into your `./js/pages` and import them in `./routes.jsx`.
-Each page must match at least one route inside `routes.jsx`
-
-### Centralized Store with useReducer
-
-This template comes with a centralized & general state that's shared with all pages and compoentes, we call it "the store".   
-
-The file `./src/store.js` has a default structure for the store, we encourage you to change it and adapt it to your data needs (for example, if you are doing a `Todo list` you will probably have a array of todos here).
-
-+ Learn [how the useReducer works](https://4geeks.com/lesson/optimize-react-components-usereducer).
-+ Read more about [implementing a global state with Context API](https://4geeks.com/lesson/context-api)
-+ Read more about [react hooks](https://content.breatheco.de/lesson/react-hooks-explained)
-
-The store `Provider` for this context is already set on `./src/main.jsx`. You can access the store from any component using the `useGlobalReducer` hook to get the `store` and `dispatcher`. Check `/views/demo.js` to see a demo. Here is a smaller sample:
-
-```jsx
-import useGlobalReducer from "./src/hooks/useGlobalReducer";
-
-const MyComponentSuper = () => {
-  //here you use the hook to get dispatcher and store
-  import { dispatch, store } = useGlobalReducer();
-
-  return <div>{/* you can use your actions or store inside the html */}</div>
-}
+```bash
+npm ci          # install the exact versions from package-lock.json
+npm run start   # development server at http://localhost:3000
 ```
 
-## Publish your website!
+| Command | What it does |
+| --- | --- |
+| `npm run start` | Development server with hot reload |
+| `npm run build` | Production build in `dist/` |
+| `npm run preview` | Serves the production build locally |
+| `npm run lint` | ESLint, with zero warnings allowed |
 
-1. **Vercel:** The FREE recomended hosting provider is [vercel.com](https://vercel.com/), you can deploy in 1 minutes by typing the following 2 commands:
+No environment variables are needed: the API is public.
 
-Login (you need to have an account):
-```sh
-$ npm i vercel -g && vercel login
+## Project structure
+
 ```
-Deploy:
-```sh
-$ vercel --prod
+src/
+  pages/        One component per route: Home, character and planet details, 404, error
+  components/   Navbar, search, carousel, cards, footer and status messages
+  hooks/        Global store (Context + useReducer), API requests, page title
+  services/     Every call to the Dragon Ball API
+  store.js      Global state: favorites, lists, and what gets saved in localStorage
+  routes.jsx    The routes
 ```
-✎ Note: If you don't have an account just go to vercel.com, create a account and come back here.
 
-![Vercel example procedure to deploy](https://github.com/4GeeksAcademy/react-hello-webapp/blob/4b530ba091a981d3916cc6e960e370decaf2e234/docs/deploy.png?raw=true)
+## How we work
 
-## Contributors
+- **`main`** is production and **`develop`** is where work is merged and tested. Each task is a GitHub issue with its own branch and pull request to `develop`.
+- **Every pull request** runs lint and build on GitHub Actions, and gets a Vercel preview.
+- **Merging into `main`** publishes to production.
 
-This template was built as part of the 4Geeks Academy [Coding Bootcamp](https://4geeksacademy.com/us/coding-bootcamp) by [Alejandro Sanchez](https://twitter.com/alesanchezr) and many other contributors. Find out more about our [Full Stack Developer Course](https://4geeksacademy.com/us/coding-bootcamps/part-time-full-stack-developer), [Data Science Bootcamp](https://4geeksacademy.com/us/coding-bootcamps/datascience-machine-learning) and [CyberSecurity Bootcamp](https://4geeksacademy.com/us/coding-bootcamps/cybersecurity).
+## Credits
+
+- Data from the [Dragon Ball API](https://dragonball-api.com).
+- The project started from the [4Geeks Academy React template](https://github.com/4GeeksAcademy/react-hello-webapp).
+- Dragon Ball and its characters belong to their respective owners. This is a non-commercial practice project.
+
+## License
+
+[MIT](LICENSE)
