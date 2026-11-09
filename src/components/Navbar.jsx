@@ -1,4 +1,5 @@
-import { Link } from "react-router";
+import { useEffect, useRef } from "react";
+import { Link, useLocation } from "react-router";
 import useGlobalReducer from "../hooks/useGlobalReducer.jsx";
 import { SearchBar } from "./SearchBar.jsx";
 
@@ -13,6 +14,24 @@ import { SearchBar } from "./SearchBar.jsx";
    ========================================================================== */
 export const Navbar = () => {
 	const { store, dispatch } = useGlobalReducer();
+	const { pathname } = useLocation();
+	const favoritesButtonRef = useRef(null); // Boton que abre el desplegable de favoritos
+
+	/*
+	  Cerrar el desplegable al cambiar de pagina.
+
+	  El navbar no se vuelve a montar al navegar (vive en el Layout), asi que
+	  Bootstrap no sabe que la pagina ha cambiado y el menu se quedaria abierto.
+	  Pasa al pulsar un favorito, al elegir algo en el buscador o con cualquier
+	  enlace. Este efecto se ejecuta cada vez que cambia la ruta y le pide a
+	  Bootstrap que lo cierre.
+
+	  "bootstrap" llega del <script> del CDN en index.html. Si no cargara, el
+	  "?." hace que no pase nada en lugar de romper la pagina.
+	*/
+	useEffect(() => {
+		window.bootstrap?.Dropdown.getInstance(favoritesButtonRef.current)?.hide();
+	}, [pathname]);
 
 	// Se separan por tipo para poder mostrarlos agrupados bajo su titulo
 	const favoriteCharacters = store.favorites.filter((fav) => fav.type === "character");
@@ -23,14 +42,21 @@ export const Navbar = () => {
 		dispatch({ type: "remove_favorite", payload: { id, type } });
 	};
 
-	// Fila reutilizable del desplegable (misma pinta para personajes y planetas)
+	/*
+	  Fila reutilizable del desplegable (misma pinta para personajes y planetas).
+	  La imagen y el nombre son un enlace a su ficha; la x de al lado es un
+	  boton aparte para quitarlo, asi que cada accion tiene su propio sitio.
+	*/
 	const renderFavoriteRow = (fav) => (
 		<li key={`${fav.type}-${fav.id}`}>
 			<div className="z-fav-row">
-				<div className="d-flex align-items-center gap-2 overflow-hidden">
+				<Link
+					to={`/${fav.type === "character" ? "characters" : "planets"}/${fav.id}`}
+					className="z-fav-link d-flex align-items-center gap-2 overflow-hidden"
+				>
 					<img src={fav.image} alt="" className="z-fav-thumb" />
 					<span className="text-truncate">{fav.name}</span>
-				</div>
+				</Link>
 				<button
 					className="z-btn-remove"
 					onClick={() => removeFavorite(fav.id, fav.type)}
@@ -56,15 +82,18 @@ export const Navbar = () => {
 				{/* --- Desplegable de favoritos --- */}
 				<div className="dropdown">
 					<button
+						ref={favoritesButtonRef}
 						className="z-btn dropdown-toggle"
 						type="button"
 						data-bs-toggle="dropdown"
 						/*
-						  auto-close="false": por defecto Bootstrap cierra el menu con
-						  cualquier clic. Al desactivarlo, el desplegable solo se cierra
-						  pulsando de nuevo este boton, y no al borrar un favorito.
+						  auto-close="outside": por defecto Bootstrap cierra el menu con
+						  cualquier clic, tambien dentro, y se cerraria al quitar un
+						  favorito con la x. Con "outside" solo se cierra al tocar fuera
+						  del menu, con Escape o pulsando de nuevo este boton, asi que
+						  se pueden quitar varios favoritos seguidos.
 						*/
-						data-bs-auto-close="false"
+						data-bs-auto-close="outside"
 						aria-expanded="false"
 					>
 						<i className="fa-solid fa-heart" aria-hidden="true"></i>

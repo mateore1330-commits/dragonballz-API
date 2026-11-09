@@ -373,6 +373,17 @@ a:hover {
 	background-color: var(--z-paper-dark);
 }
 
+/* Imagen y nombre del favorito: enlace a su ficha */
+.z-fav-link {
+	flex-grow: 1;
+	min-width: 0; /* deja que el nombre se recorte con "..." en lugar de empujar la x */
+	color: var(--z-ink);
+}
+
+.z-fav-link:hover {
+	color: var(--z-red);
+}
+
 .z-fav-thumb {
 	width: 34px;
 	height: 34px;
