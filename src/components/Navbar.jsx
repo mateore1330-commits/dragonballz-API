@@ -23,14 +23,21 @@ export const Navbar = () => {
 		dispatch({ type: "remove_favorite", payload: { id, type } });
 	};
 
-	// Fila reutilizable del desplegable (misma pinta para personajes y planetas)
+	/*
+	  Fila reutilizable del desplegable (misma pinta para personajes y planetas).
+	  La imagen y el nombre son un enlace a su ficha; la x de al lado es un
+	  boton aparte para quitarlo, asi que cada accion tiene su propio sitio.
+	*/
 	const renderFavoriteRow = (fav) => (
 		<li key={`${fav.type}-${fav.id}`}>
 			<div className="z-fav-row">
-				<div className="d-flex align-items-center gap-2 overflow-hidden">
+				<Link
+					to={`/${fav.type === "character" ? "characters" : "planets"}/${fav.id}`}
+					className="z-fav-link d-flex align-items-center gap-2 overflow-hidden"
+				>
 					<img src={fav.image} alt="" className="z-fav-thumb" />
 					<span className="text-truncate">{fav.name}</span>
-				</div>
+				</Link>
 				<button
 					className="z-btn-remove"
 					onClick={() => removeFavorite(fav.id, fav.type)}
