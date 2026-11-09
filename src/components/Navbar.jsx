@@ -1,4 +1,5 @@
-import { Link } from "react-router";
+import { useEffect, useRef } from "react";
+import { Link, useLocation } from "react-router";
 import useGlobalReducer from "../hooks/useGlobalReducer.jsx";
 import { SearchBar } from "./SearchBar.jsx";
 
@@ -13,6 +14,24 @@ import { SearchBar } from "./SearchBar.jsx";
    ========================================================================== */
 export const Navbar = () => {
 	const { store, dispatch } = useGlobalReducer();
+	const { pathname } = useLocation();
+	const favoritesButtonRef = useRef(null); // Boton que abre el desplegable de favoritos
+
+	/*
+	  Cerrar el desplegable al cambiar de pagina.
+
+	  El navbar no se vuelve a montar al navegar (vive en el Layout), asi que
+	  Bootstrap no sabe que la pagina ha cambiado y el menu se quedaria abierto.
+	  Pasa al pulsar un favorito, al elegir algo en el buscador o con cualquier
+	  enlace. Este efecto se ejecuta cada vez que cambia la ruta y le pide a
+	  Bootstrap que lo cierre.
+
+	  "bootstrap" llega del <script> del CDN en index.html. Si no cargara, el
+	  "?." hace que no pase nada en lugar de romper la pagina.
+	*/
+	useEffect(() => {
+		window.bootstrap?.Dropdown.getInstance(favoritesButtonRef.current)?.hide();
+	}, [pathname]);
 
 	// Se separan por tipo para poder mostrarlos agrupados bajo su titulo
 	const favoriteCharacters = store.favorites.filter((fav) => fav.type === "character");
@@ -63,6 +82,7 @@ export const Navbar = () => {
 				{/* --- Desplegable de favoritos --- */}
 				<div className="dropdown">
 					<button
+						ref={favoritesButtonRef}
 						className="z-btn dropdown-toggle"
 						type="button"
 						data-bs-toggle="dropdown"
