@@ -1,6 +1,5 @@
 import { useEffect } from "react"
-import { Outlet } from "react-router-dom/dist"
-import ScrollToTop from "../components/ScrollToTop"
+import { Outlet, ScrollRestoration } from "react-router"
 import { Navbar } from "../components/Navbar"
 import { Footer } from "../components/Footer"
 import useGlobalReducer from "../hooks/useGlobalReducer.jsx"
@@ -33,22 +32,66 @@ export const Layout = () => {
       La condicion isStale() es la que evita las llamadas innecesarias: si el
       store se recupero de localStorage y los datos siguen siendo recientes,
       no se pide nada a la API.
+
+      Hay un efecto por lista, y no uno para las dos: cada efecto vuelve a
+      ejecutarse cuando cambia su propia marca de tiempo, y en ese momento
+      sus datos ya estan frescos, asi que no repite la peticion. Con un solo
+      efecto, al llegar los personajes se volverian a pedir los planetas
+      aunque su peticion siguiera en marcha.
+
+      Si una descarga falla, se marca en store.loadFailed y el efecto deja de
+      intentarlo (si no, reintentaria sin parar). El boton "Reintentar" de la
+      home quita esa marca, el efecto vuelve a ejecutarse y pide la lista.
     */
+    const charactersFailed = store.loadFailed.characters
+    const planetsFailed = store.loadFailed.planets
+
     useEffect(() => {
-        if (isStale(store.characterFetchedAt)) {
-            getAllCharacter().then((data) => dispatch({ type: "set_characters", payload: data.items }))
+        if (isStale(store.characterFetchedAt) && !charactersFailed) {
+            getAllCharacter()
+                .then((data) => dispatch({ type: "set_characters", payload: data.items }))
+                .catch(() => dispatch({ type: "load_failed", payload: "characters" }))
         }
-        if (isStale(store.planetsFetchedAt)) {
-            getAllPlanets().then((data) => dispatch({ type: "set_planets", payload: data.items }))
+    }, [store.characterFetchedAt, charactersFailed, dispatch])
+
+    useEffect(() => {
+        if (isStale(store.planetsFetchedAt) && !planetsFailed) {
+            getAllPlanets()
+                .then((data) => dispatch({ type: "set_planets", payload: data.items }))
+                .catch(() => dispatch({ type: "load_failed", payload: "planets" }))
         }
-    }, [])
+    }, [store.planetsFetchedAt, planetsFailed, dispatch])
+
+    /*
+      "Saltar al contenido": quien navega con el teclado se ahorra pasar por
+      todo el navbar en cada pagina. Se mueve el foco a mano en lugar de usar
+      el "#contenido" de la URL, para que React Router no lo tome como una
+      navegacion.
+    */
+    const skipToContent = (event) => {
+        event.preventDefault()
+        document.getElementById("contenido")?.focus()
+    }
 
     return (
-        <ScrollToTop>
+        <>
+            <a href="#contenido" className="z-skip-link visually-hidden-focusable" onClick={skipToContent}>
+                Saltar al contenido
+            </a>
             <Navbar />
             {/* Outlet: aqui React Router inserta la pagina de la ruta actual */}
-            <Outlet />
+            <div id="contenido" tabIndex={-1}>
+                <Outlet />
+            </div>
             <Footer />
-        </ScrollToTop>
+            {/*
+              Control del scroll al navegar:
+                - a una pagina nueva -> empieza arriba del todo
+                - con "atras" o "adelante" del navegador -> vuelve a la
+                  posicion en la que se dejo esa pagina
+              Solo funciona con createBrowserRouter (el que usa routes.jsx).
+            */}
+            <ScrollRestoration />
+        </>
     )
 }

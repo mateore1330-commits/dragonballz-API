@@ -98,6 +98,44 @@ a:hover {
 	color: var(--z-red-dark);
 }
 
+/*
+  Foco visible para quien navega con el teclado.
+  :focus-visible solo se activa con el teclado (Tab), no al hacer clic con
+  el raton, asi que no ensucia el diseno para quien usa el raton.
+*/
+:focus-visible {
+	outline: 3px solid var(--z-red);
+	outline-offset: 2px;
+}
+
+/* El buscador ya marca el foco con su borde rojo y su sombra */
+.z-search-input:focus-visible {
+	outline: none;
+}
+
+/* Destino del enlace "Saltar al contenido": recibe el foco, pero sin marco */
+#contenido:focus {
+	outline: none;
+}
+
+/*
+  Enlace "Saltar al contenido" (Layout.jsx). Bootstrap lo oculta con
+  .visually-hidden-focusable hasta que recibe el foco; entonces aparece
+  arriba a la izquierda, por encima del navbar.
+*/
+.z-skip-link:focus {
+	position: absolute;
+	top: 0.5rem;
+	left: 0.5rem;
+	z-index: 2000;
+	padding: 0.5rem 1rem;
+	background-color: var(--z-ink);
+	color: var(--z-paper-light);
+	font-family: var(--z-font-label);
+	text-transform: uppercase;
+	letter-spacing: 0.1em;
+}
+
 
 /* ==========================================================================
    3. TITULARES Y ELEMENTOS DECORATIVOS
@@ -215,6 +253,11 @@ a:hover {
 	display: block;
 }
 
+/* Contenedor del buscador */
+.z-search {
+	max-width: 320px;
+}
+
 /* Caja del buscador */
 .z-search-input {
 	font-family: var(--z-font-label);
@@ -223,6 +266,15 @@ a:hover {
 	border-radius: var(--z-radius);
 	color: var(--z-ink);
 	padding: 0.45rem 0.75rem;
+	/* type="search": sin esto, Safari en iOS aplica su estilo nativo e ignora el borde y el radio */
+	-webkit-appearance: none;
+	appearance: none;
+}
+
+/* Oculta la "x" nativa de borrar que Chrome y Safari ponen en los campos de busqueda */
+.z-search-input::-webkit-search-cancel-button {
+	-webkit-appearance: none;
+	display: none;
 }
 
 .z-search-input::placeholder {
@@ -646,6 +698,29 @@ a:hover {
 }
 
 
+/* Mensaje de estado: cargando, no encontrado o error (StatusMessage.jsx) */
+.z-status {
+	max-width: 560px;
+	margin: 3rem auto;
+}
+
+.z-status-kanji {
+	font-family: var(--z-font-body);
+	font-weight: 900;
+	font-size: clamp(3rem, 10vw, 5rem);
+	line-height: 1;
+	color: var(--z-ink);
+	opacity: 0.15;
+	margin-bottom: 0.5rem;
+}
+
+.z-status-text {
+	color: var(--z-ink-soft);
+	line-height: 1.7;
+	margin: 1rem 0 1.5rem;
+}
+
+
 /* ==========================================================================
    8. BOTONES
    ========================================================================== */
@@ -782,5 +857,14 @@ a:hover {
 
 	.z-kanji {
 		font-size: 1.25rem;
+	}
+}
+
+/* Movil: el buscador baja a su propia fila y ocupa todo el ancho */
+@media (max-width: 575px) {
+	.z-search {
+		order: 3;
+		flex-basis: 100%;
+		max-width: none;
 	}
 }

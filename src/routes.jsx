@@ -1,34 +1,41 @@
-// Import necessary components and functions from react-router-dom.
-
 import {
     createBrowserRouter,
     createRoutesFromElements,
     Route,
-} from "react-router-dom";
+} from "react-router";
 import { Layout } from "./pages/Layout";
 import { Home } from "./pages/Home";
-import { Single } from "./pages/Single";
-import { Demo } from "./pages/Demo";
 import { CharacterDetails } from "./pages/CharacterDetails";
 import { PlanetDetails } from "./pages/PlanetDetails";
+import { NotFound } from "./pages/NotFound";
+import { ErrorPage } from "./pages/ErrorPage";
 
+/* ==========================================================================
+   RUTAS DE LA APLICACION
+   --------------------------------------------------------------------------
+   Todas las paginas cuelgan de la ruta "/" con el Layout, que pone el navbar
+   y el footer. Cada ruta hija se pinta en el <Outlet /> del Layout, asi que
+   una pagina nueva que necesite navbar y footer va dentro de esa ruta.
+
+   Hay dos errorElement, uno dentro de otro:
+     - El de la ruta sin path que envuelve a las paginas: si una pagina
+       falla al pintarse, el error se muestra dentro del Layout, con el
+       navbar y el footer.
+     - El de la raiz: solo entra si falla el propio Layout, y por eso se
+       pinta solo, sin navbar ni footer.
+
+   La ruta "*" recoge cualquier URL que no coincida con las demas.
+   ========================================================================== */
 export const router = createBrowserRouter(
     createRoutesFromElements(
-    // CreateRoutesFromElements function allows you to build route elements declaratively.
-    // Create your routes here, if you want to keep the Navbar and Footer in all views, add your new routes inside the containing Route.
-    // Root, on the contrary, create a sister Route, if you have doubts, try it!
-    // Note: keep in mind that errorElement will be the default page when you don't get a route, customize that page to make your project more attractive.
-    // Note: The child paths of the Layout element replace the Outlet component with the elements contained in the "element" attribute of these child paths.
-
-      // Root Route: All navigation will start from here.
-      <Route path="/" element={<Layout />} errorElement={<h1>Not found!</h1>} >
-
-        {/* Nested Routes: Defines sub-routes within the BaseHome component. */}
-        <Route path= "/" element={<Home />} />
-        <Route path="/single/:theId" element={ <Single />} />  {/* Dynamic route for single items */}
-        <Route path="/demo" element={<Demo />} />
-        <Route path="/characters/:id" element={<CharacterDetails />} />
-        <Route path="/planets/:id" element={<PlanetDetails />} />
+      <Route path="/" element={<Layout />} errorElement={<ErrorPage standalone />} >
+        <Route errorElement={<ErrorPage />}>
+          {/* Las rutas con ":id" leen ese trozo de la URL con useParams() */}
+          <Route index element={<Home />} />
+          <Route path="characters/:id" element={<CharacterDetails />} />
+          <Route path="planets/:id" element={<PlanetDetails />} />
+          <Route path="*" element={<NotFound />} />
+        </Route>
       </Route>
     )
 );

@@ -1,7 +1,10 @@
-import { useState, useEffect } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useParams } from "react-router";
 import { getCharacter } from "../services/services.js";
 import useGlobalReducer from "../hooks/useGlobalReducer.jsx";
+import { useApiResource } from "../hooks/useApiResource.js";
+import { ResourceStatus } from "../components/ResourceStatus.jsx";
+import { usePageTitle } from "../hooks/usePageTitle.js";
+import { resourceTitle } from "../hooks/resourceTitle.js";
 
 /* ==========================================================================
    PAGINA DE DETALLE DE UN PERSONAJE
@@ -20,27 +23,23 @@ export const CharacterDetails = () => {
 	*/
 	const { id } = useParams();
 
-	// Estado local: solo esta pagina necesita este personaje concreto
-	const [character, setCharacter] = useState(null);
 	const { store, dispatch } = useGlobalReducer();
 
-	// Se vuelve a pedir el personaje cada vez que cambia el id de la URL
-	useEffect(() => {
-		getCharacter(id).then((data) => setCharacter(data));
-	}, [id]);
-
 	/*
-	  Mientras la peticion esta en marcha, "character" vale null.
-	  Sin esta salida temprana, el primer renderizado intentaria leer
-	  character.transformations y la aplicacion se romperia.
+	  useApiResource pide el personaje cada vez que cambia el id de la URL
+	  y dice en que punto esta la peticion (ver hooks/useApiResource.js).
 	*/
-	if (!character) {
-		return (
-			<main className="container my-5 text-center">
-				<p className="z-counter">Loading...</p>
-			</main>
-		);
+	const { status, data: character, retry } = useApiResource(getCharacter, id);
+	usePageTitle(resourceTitle(status, character?.name, "Personaje no encontrado"));
+
+	// Mientras no hay personaje (cargando, no existe o error) se avisa y se
+	// sale: el resto de la pagina da por hecho que "character" tiene datos
+	if (status !== "ready") {
+		return <ResourceStatus status={status} retry={retry} notFoundTitle="Personaje no encontrado" />;
 	}
+
+	// Algunos personajes no tienen transformaciones; si el campo faltara, lista vacia
+	const transformations = character.transformations ?? [];
 
 	// Mismo criterio de favoritos que en las tarjetas: id + tipo
 	const isFavorite = store.favorites.some((fav) => fav.id === character.id && fav.type === "character");
@@ -59,7 +58,7 @@ export const CharacterDetails = () => {
 	return (
 		<main className="container my-5">
 			<Link to="/" className="z-btn mb-4">
-				<i className="fa-solid fa-arrow-left"></i>
+				<i className="fa-solid fa-arrow-left" aria-hidden="true"></i>
 				Volver
 			</Link>
 
@@ -82,9 +81,10 @@ export const CharacterDetails = () => {
 						<button
 							className={`z-btn z-btn-fav ${isFavorite ? "is-fav" : ""}`}
 							onClick={toggleFavorite}
-							aria-label={isFavorite ? "Quitar de favoritos" : "Anadir a favoritos"}
+							aria-pressed={isFavorite}
+							aria-label={isFavorite ? `Quitar ${character.name} de favoritos` : `Añadir ${character.name} a favoritos`}
 						>
-							<i className={`${isFavorite ? "fa-solid" : "fa-regular"} fa-heart`}></i>
+							<i className={`${isFavorite ? "fa-solid" : "fa-regular"} fa-heart`} aria-hidden="true"></i>
 						</button>
 					</div>
 
@@ -101,11 +101,14 @@ export const CharacterDetails = () => {
 					{/*
 					  originPlanet llega como objeto anidado dentro del personaje,
 					  asi que se puede enlazar directamente a su pagina de detalle.
+					  Si algun personaje no lo trajera, simplemente no se pinta.
 					*/}
-					<Link to={`/planets/${character.originPlanet.id}`} className="z-btn">
-						<i className="fa-solid fa-earth-americas"></i>
-						Planeta de origen: {character.originPlanet.name}
-					</Link>
+					{character.originPlanet && (
+						<Link to={`/planets/${character.originPlanet.id}`} className="z-btn">
+							<i className="fa-solid fa-earth-americas" aria-hidden="true"></i>
+							Planeta de origen: {character.originPlanet.name}
+						</Link>
+					)}
 				</div>
 			</div>
 
@@ -114,17 +117,17 @@ export const CharacterDetails = () => {
 				<div className="z-section-head">
 					<div className="d-flex align-items-end gap-3 flex-wrap">
 						<h2 className="z-title z-title--sm">Transformaciones</h2>
-						<span className="z-kanji d-none d-md-inline">変身</span>
+						<span className="z-kanji d-none d-md-inline" aria-hidden="true">変身</span>
 					</div>
-					<span className="z-counter">{String(character.transformations.length).padStart(2, "0")} FORMAS</span>
+					<span className="z-counter">{String(transformations.length).padStart(2, "0")} FORMAS</span>
 				</div>
 
 				{/* Algunos personajes no tienen ninguna transformacion */}
-				{character.transformations.length === 0 ? (
+				{transformations.length === 0 ? (
 					<p className="z-counter">No hay transformaciones disponibles.</p>
 				) : (
 					<div className="d-flex flex-wrap gap-3">
-						{character.transformations.map((transformation) => (
+						{transformations.map((transformation) => (
 							<article key={transformation.id} className="z-transformation">
 								<div className="z-transformation-figure">
 									<img src={transformation.image} alt={transformation.name} />

@@ -29,8 +29,8 @@ const getVisibleCount = () => {
 };
 
 export const Carousel = ({ title, kanji, items, renderItem }) => {
-	// Indice del primer elemento visible dentro de la ventana
-	const [index, setIndex] = useState(0);
+	// Indice del primer elemento visible, tal y como lo dejaron las flechas
+	const [rawIndex, setIndex] = useState(0);
 	// Cuantas tarjetas caben a la vez (cambia con el tamano de la pantalla)
 	const [visibleCount, setVisibleCount] = useState(getVisibleCount);
 
@@ -44,13 +44,17 @@ export const Carousel = ({ title, kanji, items, renderItem }) => {
 	// Ultimo indice valido: evita dejar huecos vacios al final del carrusel
 	const maxIndex = Math.max(0, items.length - visibleCount);
 
-	// Si la pantalla se encoge y el indice actual se sale de rango, lo corregimos
-	useEffect(() => {
-		setIndex((prev) => Math.min(prev, maxIndex));
-	}, [maxIndex]);
+	/*
+	  Indice que se usa de verdad. Si la pantalla se ensancha y caben mas
+	  tarjetas, el indice guardado puede quedar fuera de rango: se recorta
+	  aqui, al pintar, en lugar de corregir el estado con un useEffect (eso
+	  obligaria a React a pintar dos veces seguidas).
+	*/
+	const index = Math.min(rawIndex, maxIndex);
 
-	const goPrev = () => setIndex((prev) => Math.max(0, prev - 1));
-	const goNext = () => setIndex((prev) => Math.min(maxIndex, prev + 1));
+	// Las flechas parten del indice recortado, no del guardado
+	const goPrev = () => setIndex(Math.max(0, index - 1));
+	const goNext = () => setIndex(Math.min(maxIndex, index + 1));
 
 	// Ancho de cada tarjeta en % — el mismo valor sirve para desplazar la fila
 	const slideWidth = 100 / visibleCount;
@@ -61,7 +65,7 @@ export const Carousel = ({ title, kanji, items, renderItem }) => {
 			<div className="z-section-head">
 				<div className="d-flex align-items-end gap-3 flex-wrap">
 					<h2 className="z-title">{title}</h2>
-					<span className="z-kanji d-none d-md-inline">{kanji}</span>
+					<span className="z-kanji d-none d-md-inline" aria-hidden="true">{kanji}</span>
 				</div>
 
 				<div className="d-flex align-items-center gap-3">
@@ -78,7 +82,7 @@ export const Carousel = ({ title, kanji, items, renderItem }) => {
 						disabled={index === 0}
 						aria-label={`Anterior en ${title}`}
 					>
-						<i className="fa-solid fa-chevron-left"></i>
+						<i className="fa-solid fa-chevron-left" aria-hidden="true"></i>
 					</button>
 					<button
 						className="z-arrow"
@@ -86,7 +90,7 @@ export const Carousel = ({ title, kanji, items, renderItem }) => {
 						disabled={index >= maxIndex}
 						aria-label={`Siguiente en ${title}`}
 					>
-						<i className="fa-solid fa-chevron-right"></i>
+						<i className="fa-solid fa-chevron-right" aria-hidden="true"></i>
 					</button>
 				</div>
 			</div>
@@ -97,15 +101,26 @@ export const Carousel = ({ title, kanji, items, renderItem }) => {
 					className="z-carousel-track"
 					style={{ transform: `translateX(-${index * slideWidth}%)` }}
 				>
-					{items.map((item) => (
-						<div
-							key={`${item.id}-${item.name}`}
-							className="z-carousel-slide"
-							style={{ width: `${slideWidth}%` }}
-						>
-							{renderItem(item)}
-						</div>
-					))}
+					{items.map((item, position) => {
+						/*
+						  Las tarjetas que quedan fuera de la ventana siguen en la
+						  pagina (solo estan desplazadas). "inert" las saca del orden
+						  del tabulador y del lector de pantalla; sin el, el foco del
+						  teclado acabaria en un "Leer mas" que no se ve.
+						  En React 18 "inert" se pasa como texto: "" = activado.
+						*/
+						const isVisible = position >= index && position < index + visibleCount;
+						return (
+							<div
+								key={`${item.id}-${item.name}`}
+								className="z-carousel-slide"
+								style={{ width: `${slideWidth}%` }}
+								inert={isVisible ? undefined : ""}
+							>
+								{renderItem(item)}
+							</div>
+						);
+					})}
 				</div>
 			</div>
 		</section>
