@@ -60,11 +60,13 @@ export const Navbar = () => {
 						type="button"
 						data-bs-toggle="dropdown"
 						/*
-						  auto-close="false": por defecto Bootstrap cierra el menu con
-						  cualquier clic. Al desactivarlo, el desplegable solo se cierra
-						  pulsando de nuevo este boton, y no al borrar un favorito.
+						  auto-close="outside": por defecto Bootstrap cierra el menu con
+						  cualquier clic, tambien dentro, y se cerraria al quitar un
+						  favorito con la x. Con "outside" solo se cierra al tocar fuera
+						  del menu, con Escape o pulsando de nuevo este boton, asi que
+						  se pueden quitar varios favoritos seguidos.
 						*/
-						data-bs-auto-close="false"
+						data-bs-auto-close="outside"
 						aria-expanded="false"
 					>
 						<i className="fa-solid fa-heart" aria-hidden="true"></i>
